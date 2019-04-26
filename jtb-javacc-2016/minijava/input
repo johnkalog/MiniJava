@@ -1,1 +1,21 @@
-5 + 124 + 45 / 32 - 23 * 9 + (8 - 3)
+class Input{
+    public static void main(String[] i){
+    	A a;
+      B b;
+    }
+}
+
+class A{
+    int i;
+    boolean flag;
+    int j;
+    public int foo() {return 5;}
+    public boolean fa() {return true;}
+}
+
+class B extends A{
+    A type;
+    int k;
+    public int foo() {return 6;}
+    public boolean bla() {return true;}
+}
