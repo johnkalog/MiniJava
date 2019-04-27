@@ -9,7 +9,7 @@ class A{
     int i;
     boolean flag;
     int j;
-    public int foo() {return 5;}
+    public int foo(int w) {return 5;}
     public boolean fa() {return true;}
 }
 
