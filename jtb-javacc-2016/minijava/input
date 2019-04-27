@@ -9,13 +9,13 @@ class A{
     int i;
     boolean flag;
     int j;
-    public int foo(int w) {return 5;}
+    public int foo(int w) {int a; int q; int e; boolean p; boolean lws; return 5;}
     public boolean fa() {return true;}
 }
 
 class B extends A{
     int k;
     A type;
-    public int foo() {return 6;}
-    public boolean bla() {return true;}
+    public int foo() {int efw; boolean few; return 6;}
+    public boolean bla() {int d; int j; return true;}
 }

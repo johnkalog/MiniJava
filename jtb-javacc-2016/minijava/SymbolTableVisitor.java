@@ -6,10 +6,13 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
 
   private Map<String, String> ClassExtend;
   private Map<ArrayList <String>, String> ClassFields;
+  private Map<ArrayList <String>, String> FunctionFields;
 
   public SymbolTableVisitor(){
     ClassExtend = new HashMap<String, String>();
     ClassFields = new HashMap<ArrayList <String>, String>();
+    FunctionFields = new HashMap<ArrayList <String>, String>();
+
   }
 
   /**
@@ -122,7 +125,14 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      else{
        System.out.println("noo");
      }
-     n.f4.accept(this, argu);
+     Map <String, String> ClassForMethod = new HashMap<String, String>();
+     if ( n.f4.present() ){
+       ClassForMethod.put(ClassName,null);
+       n.f4.accept(this, ClassForMethod);
+     }
+     else{
+       System.out.println("noo1");
+     }
      n.f5.accept(this, argu);
      return _ret;
   }
@@ -162,7 +172,15 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
        System.out.println("noo");
      }
      // n.f5.accept(this, argu);
-     n.f6.accept(this, argu);
+     Map <String, String> ClassForMethod = new HashMap<String, String>();
+     if ( n.f6.present() ){
+       ClassForMethod.put(ClassName,null);
+       n.f6.accept(this, ClassForMethod);
+     }
+     else{
+       System.out.println("noo1");
+     }
+     // n.f6.accept(this, argu);
      n.f7.accept(this, argu);
      return _ret;
   }
@@ -200,25 +218,26 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
-     n.f2.accept(this, argu);
+     String MethodName = n.f2.accept(this, argu).keySet().toArray()[0].toString();
      n.f3.accept(this, argu);
      n.f4.accept(this, argu);
      n.f5.accept(this, argu);
      n.f6.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>();
-     System.out.println(IdentifierType);
      if ( n.f7.present() ){
        n.f7.accept(this, IdentifierType);
-       // IdentifierType.forEach((key, value) -> {
-       //   ArrayList<String> IdentifierClass = new ArrayList<String>();
-       //   IdentifierClass.add(key);
-       //   IdentifierClass.add(ClassName);
-       //   ClassFields.put(IdentifierClass,value);
-       // });
-       // System.out.println(ClassFields);
+       String ClassName = argu.keySet().toArray()[0].toString();
+       IdentifierType.forEach((key, value) -> {
+         ArrayList<String> IdentifierFunctionClass = new ArrayList<String>();
+         IdentifierFunctionClass.add(key);
+         IdentifierFunctionClass.add(MethodName);
+         IdentifierFunctionClass.add(ClassName);
+         FunctionFields.put(IdentifierFunctionClass,value);
+       });
+       System.out.println(FunctionFields);
      }
      else{
-       System.out.println("noo");
+       System.out.println("noo1");
      }
      // n.f7.accept(this, argu);
      n.f8.accept(this, argu);
