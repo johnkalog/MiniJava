@@ -2,12 +2,14 @@ import syntaxtree.*;
 import visitor.GJDepthFirst;
 import java.util.*;
 
-public class SymbolTableVisitor extends GJDepthFirst<String, String>{
+public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, String>{
 
-  private HashMap<String, String> ClassExtend;
+  private Map<String, String> ClassExtend;
+  private Map<Set <String>, String> ClassFields;
 
   public SymbolTableVisitor(){
     ClassExtend = new HashMap<String, String>();
+    ClassFields = new HashMap<Set <String>, String>();
   }
 
   /**
@@ -15,8 +17,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> ( TypeDeclaration() )*
    * f2 -> <EOF>
    */
-  public String visit(Goal n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(Goal n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -44,8 +46,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f16 -> "}"
    * f17 -> "}"
    */
-  public String visit(MainClass n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(MainClass n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -71,7 +73,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> ClassDeclaration()
    *       | ClassExtendsDeclaration()
    */
-  public String visit(TypeDeclaration n, String argu) {
+  public Map<String, String> visit(TypeDeclaration n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -83,10 +85,10 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f4 -> ( MethodDeclaration() )*
    * f5 -> "}"
    */
-  public String visit(ClassDeclaration n, String argu) {
-    String ClassName = n.f1.accept(this, argu);
+  public Map<String, String> visit(ClassDeclaration n, String argu) {
+    String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
     ClassExtend.put(ClassName,null);
-     String _ret=null;
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -106,11 +108,11 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f6 -> ( MethodDeclaration() )*
    * f7 -> "}"
    */
-  public String visit(ClassExtendsDeclaration n, String argu) {
-    String ClassName = n.f1.accept(this, argu);
-    String ClassParent = n.f3.accept(this, argu);
+  public Map<String, String> visit(ClassExtendsDeclaration n, String argu) {
+    String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
+    String ClassParent = n.f3.accept(this, argu).keySet().toArray()[0].toString();
     ClassExtend.put(ClassName,ClassParent);
-     String _ret=null;
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -127,10 +129,12 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> Identifier()
    * f2 -> ";"
    */
-  public String visit(VarDeclaration n, String argu) {
-     String _ret=null;
-     n.f0.accept(this, argu);
-     n.f1.accept(this, argu);
+  public Map<String, String> visit(VarDeclaration n, String argu) {
+    // Map <String, String> TypeIdentifier = new HashMap<String, String>();
+    // String Type = n.f0.accept(this, argu);
+    // String Identifier =n.f1.accept(this, argu);
+    // TypeIdentifier.put(Type,Identifier);
+     Map<String, String> _ret=null;
      n.f2.accept(this, argu);
      return _ret;
   }
@@ -150,8 +154,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f11 -> ";"
    * f12 -> "}"
    */
-  public String visit(MethodDeclaration n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(MethodDeclaration n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -172,8 +176,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> FormalParameter()
    * f1 -> FormalParameterTail()
    */
-  public String visit(FormalParameterList n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(FormalParameterList n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -183,8 +187,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> Type()
    * f1 -> Identifier()
    */
-  public String visit(FormalParameter n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(FormalParameter n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -193,7 +197,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
   /**
    * f0 -> ( FormalParameterTerm() )*
    */
-  public String visit(FormalParameterTail n, String argu) {
+  public Map<String, String> visit(FormalParameterTail n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -201,8 +205,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> ","
    * f1 -> FormalParameter()
    */
-  public String visit(FormalParameterTerm n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(FormalParameterTerm n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -214,7 +218,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    *       | IntegerType()
    *       | Identifier()
    */
-  public String visit(Type n, String argu) {
+  public Map<String, String> visit(Type n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -223,26 +227,34 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "["
    * f2 -> "]"
    */
-  public String visit(ArrayType n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ArrayType n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
-     return _ret;
+     Map<String, String> ArrayType = new HashMap<String, String>();
+     ArrayType.put("ArrayType",null);
+     return ArrayType;
   }
 
   /**
    * f0 -> "boolean"
    */
-  public String visit(BooleanType n, String argu) {
-     return n.f0.accept(this, argu);
+  public Map<String, String> visit(BooleanType n, String argu) {
+     n.f0.accept(this, argu);
+     Map<String, String> BooleanType = new HashMap<String, String>();
+     BooleanType.put("BooleanType",null);
+     return BooleanType;
   }
 
   /**
    * f0 -> "int"
    */
-  public String visit(IntegerType n, String argu) {
-     return n.f0.accept(this, argu);
+  public Map<String, String> visit(IntegerType n, String argu) {
+     n.f0.accept(this, argu);
+     Map<String, String> IntegerType = new HashMap<String, String>();
+     IntegerType.put("IntegerType",null);
+     return IntegerType;
   }
 
   /**
@@ -253,7 +265,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    *       | WhileStatement()
    *       | PrintStatement()
    */
-  public String visit(Statement n, String argu) {
+  public Map<String, String> visit(Statement n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -262,8 +274,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> ( Statement() )*
    * f2 -> "}"
    */
-  public String visit(Block n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(Block n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -276,8 +288,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f2 -> Expression()
    * f3 -> ";"
    */
-  public String visit(AssignmentStatement n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(AssignmentStatement n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -294,8 +306,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f5 -> Expression()
    * f6 -> ";"
    */
-  public String visit(ArrayAssignmentStatement n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ArrayAssignmentStatement n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -315,8 +327,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f5 -> "else"
    * f6 -> Statement()
    */
-  public String visit(IfStatement n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(IfStatement n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -334,8 +346,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f3 -> ")"
    * f4 -> Statement()
    */
-  public String visit(WhileStatement n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(WhileStatement n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -351,8 +363,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f3 -> ")"
    * f4 -> ";"
    */
-  public String visit(PrintStatement n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(PrintStatement n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -372,7 +384,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    *       | MessageSend()
    *       | Clause()
    */
-  public String visit(Expression n, String argu) {
+  public Map<String, String> visit(Expression n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -381,8 +393,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "&&"
    * f2 -> Clause()
    */
-  public String visit(AndExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(AndExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -394,8 +406,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "<"
    * f2 -> PrimaryExpression()
    */
-  public String visit(CompareExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(CompareExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -407,8 +419,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "+"
    * f2 -> PrimaryExpression()
    */
-  public String visit(PlusExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(PlusExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -420,8 +432,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "-"
    * f2 -> PrimaryExpression()
    */
-  public String visit(MinusExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(MinusExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -433,8 +445,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "*"
    * f2 -> PrimaryExpression()
    */
-  public String visit(TimesExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(TimesExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -447,8 +459,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f2 -> PrimaryExpression()
    * f3 -> "]"
    */
-  public String visit(ArrayLookup n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ArrayLookup n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -461,8 +473,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> "."
    * f2 -> "length"
    */
-  public String visit(ArrayLength n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ArrayLength n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -477,8 +489,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f4 -> ( ExpressionList() )?
    * f5 -> ")"
    */
-  public String visit(MessageSend n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(MessageSend n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -492,8 +504,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> Expression()
    * f1 -> ExpressionTail()
    */
-  public String visit(ExpressionList n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ExpressionList n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -502,7 +514,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
   /**
    * f0 -> ( ExpressionTerm() )*
    */
-  public String visit(ExpressionTail n, String argu) {
+  public Map<String, String> visit(ExpressionTail n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -510,8 +522,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> ","
    * f1 -> Expression()
    */
-  public String visit(ExpressionTerm n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ExpressionTerm n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -521,7 +533,7 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> NotExpression()
    *       | PrimaryExpression()
    */
-  public String visit(Clause n, String argu) {
+  public Map<String, String> visit(Clause n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -535,43 +547,45 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    *       | AllocationExpression()
    *       | BracketExpression()
    */
-  public String visit(PrimaryExpression n, String argu) {
+  public Map<String, String> visit(PrimaryExpression n, String argu) {
      return n.f0.accept(this, argu);
   }
 
   /**
    * f0 -> <INTEGER_LITERAL>
    */
-  public String visit(IntegerLiteral n, String argu) {
+  public Map<String, String> visit(IntegerLiteral n, String argu) {
      return n.f0.accept(this, argu);
   }
 
   /**
    * f0 -> "true"
    */
-  public String visit(TrueLiteral n, String argu) {
+  public Map<String, String> visit(TrueLiteral n, String argu) {
      return n.f0.accept(this, argu);
   }
 
   /**
    * f0 -> "false"
    */
-  public String visit(FalseLiteral n, String argu) {
+  public Map<String, String> visit(FalseLiteral n, String argu) {
      return n.f0.accept(this, argu);
   }
 
   /**
    * f0 -> <IDENTIFIER>
    */
-  public String visit(Identifier n, String argu) {
+  public Map<String, String> visit(Identifier n, String argu) {
      //return n.f0.accept(this, argu);
-     return n.f0.toString();
+     Map<String, String> Identifier = new HashMap<String, String>();
+     Identifier.put(n.f0.toString(),null);
+     return Identifier;
   }
 
   /**
    * f0 -> "this"
    */
-  public String visit(ThisExpression n, String argu) {
+  public Map<String, String> visit(ThisExpression n, String argu) {
      return n.f0.accept(this, argu);
   }
 
@@ -582,8 +596,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f3 -> Expression()
    * f4 -> "]"
    */
-  public String visit(ArrayAllocationExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(ArrayAllocationExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -598,8 +612,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f2 -> "("
    * f3 -> ")"
    */
-  public String visit(AllocationExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(AllocationExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -611,8 +625,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f0 -> "!"
    * f1 -> Clause()
    */
-  public String visit(NotExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(NotExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      return _ret;
@@ -623,8 +637,8 @@ public class SymbolTableVisitor extends GJDepthFirst<String, String>{
    * f1 -> Expression()
    * f2 -> ")"
    */
-  public String visit(BracketExpression n, String argu) {
-     String _ret=null;
+  public Map<String, String> visit(BracketExpression n, String argu) {
+     Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
