@@ -14,8 +14,8 @@ class A{
 }
 
 class B extends A{
-    A type;
     int k;
+    A type;
     public int foo() {return 6;}
     public boolean bla() {return true;}
 }
