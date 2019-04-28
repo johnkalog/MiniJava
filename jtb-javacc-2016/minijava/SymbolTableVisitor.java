@@ -227,9 +227,19 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      FunctionInfo.add(ClassName);
      System.out.println(FunctionInfo);
      n.f3.accept(this, argu);
-     // ArrayList Arguments = n.f4.accept(this, argu).keySet();
-     // FunctionTypes.put(FunctionInfo,ReturnParameters);
-     //System.out.println(FunctionTypes);
+     ArrayList<String> ReturnArguments;
+     if ( n.f4.present() ){
+       Map<String, String> Arguments = n.f4.accept(this, argu);
+       ReturnArguments = new ArrayList<String>(Arguments.values());
+
+     }
+     else{
+       ReturnArguments = new ArrayList<String>();
+       //System.out.println("noo2");
+     }
+     ReturnArguments.add(0,ReturnType);
+     FunctionTypes.put(FunctionInfo,ReturnArguments);
+     System.out.println(FunctionTypes);
      n.f5.accept(this, argu);
      n.f6.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>();
@@ -262,11 +272,11 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    */
   public Map<String, String> visit(FormalParameterList n, Map<String, String> argu) {
      Map<String, String> _ret=null;
-     Map <String, String> Arguments = new HashMap<String, String>();
+     Map <String, String> Arguments = new LinkedHashMap<String, String>();
      n.f0.accept(this, Arguments);
      n.f1.accept(this, Arguments);
      //System.out.println("fwef"+Arguments);
-     return _ret;
+     return Arguments;
   }
 
   /**
