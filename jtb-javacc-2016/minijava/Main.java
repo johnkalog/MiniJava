@@ -16,6 +16,7 @@ class Main {
 	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
 	    Goal root = parser.Goal();
 	    System.out.println(root.accept(SymbolTable, null));
+      SymbolTable.printSymbolTable();
 	}
 	catch(ParseException ex){
 	    System.out.println(ex.getMessage());
