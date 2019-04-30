@@ -5,10 +5,10 @@ import semantic.*;
 
 class Main {
   public static void main (String [] args){
-  	if(args.length != 1){
-  	    System.err.println("Usage: java Driver <inputFile>");
-  	    System.exit(1);
-  	}
+  	// if(args.length != 1){
+  	//     System.err.println("Usage: java Driver <inputFile>");
+  	//     System.exit(1);
+  	// }
     for ( int i=0; i<args.length; i++ ){
     	FileInputStream fis = null;
       System.out.println("----------------------"+args[i]+"-------------------------");
