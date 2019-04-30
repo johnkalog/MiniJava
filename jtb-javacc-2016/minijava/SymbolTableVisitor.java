@@ -32,9 +32,6 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    */
   public Map<String, String> visit(Goal n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
-     if ( 1==1 ){
-       throw new SemanticException();
-     }
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -106,6 +103,9 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    */
   public Map<String, String> visit(ClassDeclaration n, Map<String, String> argu) throws Exception {
     String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
+    if ( ClassExtend.containsKey(ClassName) ){
+      throw new RedefinitionClass(ClassName);
+    }
     ClassExtend.put(ClassName,null);  //no ClassParent
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
@@ -149,6 +149,12 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   public Map<String, String> visit(ClassExtendsDeclaration n, Map<String, String> argu) throws Exception {
     String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
     String ClassParent = n.f3.accept(this, argu).keySet().toArray()[0].toString();
+    if ( ClassExtend.containsKey(ClassName) ){
+      throw new RedefinitionClass(ClassName);
+    }
+    if ( ClassName==ClassParent ){
+      throw new ExtendsItsSelf(ClassName);
+    }
     ClassExtend.put(ClassName,ClassParent);
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);

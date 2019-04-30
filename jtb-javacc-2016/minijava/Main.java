@@ -20,7 +20,8 @@ class Main {
 	      System.out.println(root.accept(SymbolTable, null));
         SymbolTable.printSymbolTable();
       }
-      catch(Exception e){
+      catch(Exception e){ //because that throw the SymbolTableVisitor class
+        System.out.println("Semantic error");
         System.out.println(e.getMessage());
       }
 	}
