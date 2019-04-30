@@ -9,6 +9,6 @@ public class ExtendsNotDefined extends Exception{
   }
 
   public String getMessage() {
-    return "Class "+this.ClassName+" extends "+this.ExtendsName+",class "+ExtendsName+" not defined yet";
+    return "Class: "+this.ClassName+" extends: "+this.ExtendsName+",class: "+ExtendsName+" not defined yet";
   }
 }

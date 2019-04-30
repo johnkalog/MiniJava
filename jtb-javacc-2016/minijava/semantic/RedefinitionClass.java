@@ -8,6 +8,6 @@ public class RedefinitionClass extends Exception{
   }
 
   public String getMessage() {
-    return "Redefinition of class "+this.ClassName;
+    return "Redefinition of class: "+this.ClassName;
   }
 }

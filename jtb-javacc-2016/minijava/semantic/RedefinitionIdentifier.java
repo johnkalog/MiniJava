@@ -9,6 +9,6 @@ public class RedefinitionIdentifier extends Exception{
   }
 
   public String getMessage() {
-    return "Identifier "+this.Identifier+" already defined as "+this.Type;
+    return "Identifier: "+this.Identifier+" already defined as: "+this.Type;
   }
 }

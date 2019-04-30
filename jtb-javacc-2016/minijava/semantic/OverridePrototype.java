@@ -10,6 +10,6 @@ public class OverridePrototype extends Exception{
   }
 
   public String getMessage() {
-    return "Method "+this.MethodName+" at class "+this.ClassName+" has different prototype from it's parent class "+this.ClassParent;
+    return "Method: "+this.MethodName+" at class: "+this.ClassName+" has different prototype from it's parent class: "+this.ClassParent;
   }
 }

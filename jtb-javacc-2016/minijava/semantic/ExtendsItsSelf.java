@@ -8,6 +8,6 @@ public class ExtendsItsSelf extends Exception{
   }
 
   public String getMessage() {
-    return "Class "+this.ClassName+" extends it's self";
+    return "Class: "+this.ClassName+" extends it's self";
   }
 }

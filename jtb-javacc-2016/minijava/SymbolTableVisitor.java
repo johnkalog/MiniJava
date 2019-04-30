@@ -18,8 +18,38 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
 
   }
 
+  public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
+    for ( ArrayList <String> key : ClassFields.keySet() ){
+      if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType "){
+        if ( !ClassExtend.containsKey(ClassFields.get(key)) ){
+          throw new UnknownIdentifierClass(key.get(0),key.get(1),ClassFields.get(key));
+        }
+      }
+    }
+    for ( ArrayList <String> key : FunctionFields.keySet() ){
+      if ( FunctionFields.get(key)!="IntegerType" && FunctionFields.get(key)!="BooleanType" && FunctionFields.get(key)!="ArrayType "){
+        if ( !ClassExtend.containsKey(FunctionFields.get(key)) ){
+          throw new UnknownIdentifierMethod(key.get(0),key.get(1),key.get(2),FunctionFields.get(key));
+        }
+      }
+    }
+    for ( ArrayList <String> key : FunctionTypes.keySet() ){
+      ArrayList<String> AllArgumentsOnlyValues = new ArrayList<String>(FunctionTypes.get(key));
+      System.out.println(AllArgumentsOnlyValues);
+      KeepTypes(AllArgumentsOnlyValues);
+      for ( int i=0; i<AllArgumentsOnlyValues.size(); i++ ){
+        String value = AllArgumentsOnlyValues.get(i);
+        if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType "){
+          if ( !ClassExtend.containsKey(value) ){
+            throw new UnknownPrototypeMethod(key.get(0),key.get(1),value,i);
+          }
+        }
+      }
+    }
+  }
+
   public void KeepTypes(ArrayList <String> myList){ //keep only types
-    for ( int i=0; i<myList.size(); i++ ){
+    for ( int i=1; i<myList.size(); i++ ){  //value 0 may be a class
       String value = myList.get(i);
       if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType" ){
         myList.remove(value);
@@ -44,6 +74,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
+     CheckClassTypes();
      return _ret;
   }
 
