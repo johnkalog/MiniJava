@@ -15,7 +15,22 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     ClassFields = new HashMap<ArrayList <String>, String>();
     FunctionFields = new HashMap<ArrayList <String>, String>();
     FunctionTypes = new HashMap<ArrayList <String>, ArrayList<String>>();
+  }
 
+  public Map<String, String> getClassExtend(){
+    return this.ClassExtend;
+  }
+
+  public Map<ArrayList <String>, String> getClassFields(){
+    return this.ClassFields;
+  }
+
+  public Map<ArrayList <String>, String> getFunctionFields(){
+    return this.FunctionFields;
+  }
+
+  public Map<ArrayList <String>, ArrayList<String>> getFunctionTypes(){
+    return this.FunctionTypes;
   }
 
   public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
@@ -35,7 +50,6 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     }
     for ( ArrayList <String> key : FunctionTypes.keySet() ){
       ArrayList<String> AllArgumentsOnlyValues = new ArrayList<String>(FunctionTypes.get(key));
-      System.out.println(AllArgumentsOnlyValues);
       KeepTypes(AllArgumentsOnlyValues);
       for ( int i=0; i<AllArgumentsOnlyValues.size(); i++ ){
         String value = AllArgumentsOnlyValues.get(i);
