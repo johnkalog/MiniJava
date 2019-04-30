@@ -8,7 +8,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   private Map<String, String> ClassExtend;  //ClassName,ClassParent
   private Map<ArrayList <String>, String> ClassFields;  //[Identifier ClassName] Type
   private Map<ArrayList <String>, String> FunctionFields; //[Identifier MethodName ClassName] Type
-  private Map<ArrayList <String>, ArrayList<String>> FunctionTypes; //[MethodName ClassName] [ReturnType ArgumentType1 ... ArgumentType2]
+  private Map<ArrayList <String>, ArrayList<String>> FunctionTypes; //[MethodName ClassName] [ReturnType ArgumentIdentifier1 ArgumentType1 ...ArgumentIdentifiern ArgumentTypen]
 
   public SymbolTableVisitor(){
     ClassExtend = new HashMap<String, String>();
@@ -113,7 +113,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      n.f2.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>();
      if ( n.f3.present() ){
-       n.f3.accept(this, IdentifierType);
+       n.f3.accept(this, IdentifierType);   //argument to f3 to add values
        IdentifierType.forEach((key, value) -> {
          ArrayList<String> IdentifierClass = new ArrayList<String>();
          IdentifierClass.add(key);
@@ -126,7 +126,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      }
      Map <String, String> ClassForMethod = new HashMap<String, String>();
      if ( n.f4.present() ){
-       ClassForMethod.put(ClassName,null);  //argiment to f4 to add values
+       ClassForMethod.put(ClassName,null);  //argument to f4 ClassName
        n.f4.accept(this, ClassForMethod);
      }
      else{
@@ -154,6 +154,9 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     }
     if ( ClassName==ClassParent ){
       throw new ExtendsItsSelf(ClassName);
+    }
+    if ( !ClassExtend.containsKey(ClassParent) ){
+      throw new ExtendsNotDefined(ClassName,ClassParent);
     }
     ClassExtend.put(ClassName,ClassParent);
      Map<String, String> _ret=null;
@@ -195,6 +198,9 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) throws Exception {
     String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
     String Identifier =n.f1.accept(this, argu).keySet().toArray()[0].toString();
+    if ( argu.containsKey(Identifier) ){
+      throw new RedefinitionIdentifier(Identifier,argu.get(Identifier));
+    }
     argu.put(Identifier,Type);
     Map<String, String> _ret=null;
     n.f2.accept(this, argu);
@@ -226,15 +232,13 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      FunctionInfo.add(MethodName);
      FunctionInfo.add(ClassName);
      n.f3.accept(this, argu);
-     ArrayList<String> ReturnArguments;
+     ArrayList<String> ReturnArguments = new ArrayList<String>();
      if ( n.f4.present() ){
        Map<String, String> Arguments = n.f4.accept(this, argu);
-       ReturnArguments = new ArrayList<String>(Arguments.values()); //convert HashMap values to ArrayList
-
-     }
-     else{
-       ReturnArguments = new ArrayList<String>();
-       //System.out.println("No arguments for function "+MethodName+" in class "+ClassName);
+       Arguments.forEach((key, value) -> {
+         ReturnArguments.add(key);
+         ReturnArguments.add(value);
+       });
      }
      ReturnArguments.add(0,ReturnType); //first is ReturnType
      FunctionTypes.put(FunctionInfo,ReturnArguments);
@@ -282,6 +286,9 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      Map<String, String> _ret=null;
      String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
      String Identifier = n.f1.accept(this, argu).keySet().toArray()[0].toString();
+     if ( argu.containsKey(Identifier) ){
+       throw new RedefinitionMethod(Identifier,argu.get(Identifier));
+     }
      argu.put(Identifier,Type);
      return _ret;
   }

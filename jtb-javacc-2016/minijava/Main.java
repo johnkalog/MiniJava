@@ -22,7 +22,7 @@ class Main {
       }
       catch(Exception e){ //because that throw the SymbolTableVisitor class
         System.out.println("Semantic error");
-        System.out.println(e.getMessage());
+        System.out.println(e.getMessage()); //overrided at files in folder semantic
       }
 	}
 	catch(ParseException ex){

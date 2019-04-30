@@ -13,7 +13,7 @@ class A{
     public boolean fa() {return true;}
 }
 
-class B extends B{
+class B extends A{
     int k;
     A type;
     public int foo() {int efw; boolean few; return 6;}
