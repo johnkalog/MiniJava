@@ -1,6 +1,7 @@
 import syntaxtree.*;
 import visitor.*;
 import java.io.*;
+import semantic.*;
 
 class Main {
     public static void main (String [] args){
@@ -15,8 +16,13 @@ class Main {
 	    System.err.println("Program parsed successfully.");
 	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
 	    Goal root = parser.Goal();
-	    System.out.println(root.accept(SymbolTable, null));
-      SymbolTable.printSymbolTable();
+      try{
+	      System.out.println(root.accept(SymbolTable, null));
+        SymbolTable.printSymbolTable();
+      }
+      catch(Exception e){
+        System.out.println(e.getMessage());
+      }
 	}
 	catch(ParseException ex){
 	    System.out.println(ex.getMessage());

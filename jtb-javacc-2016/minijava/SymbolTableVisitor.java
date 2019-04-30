@@ -1,6 +1,7 @@
 import syntaxtree.*;
 import visitor.GJDepthFirst;
 import java.util.*;
+import semantic.*;
 
 public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<String, String>>{
 
@@ -29,8 +30,11 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f1 -> ( TypeDeclaration() )*
    * f2 -> <EOF>
    */
-  public Map<String, String> visit(Goal n, Map<String, String> argu) {
+  public Map<String, String> visit(Goal n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
+     if ( 1==1 ){
+       throw new SemanticException();
+     }
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
      n.f2.accept(this, argu);
@@ -57,7 +61,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f16 -> "}"
    * f17 -> "}"
    */
-  public Map<String, String> visit(MainClass n, Map<String, String> argu) {
+  public Map<String, String> visit(MainClass n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
@@ -100,7 +104,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f4 -> ( MethodDeclaration() )*
    * f5 -> "}"
    */
-  public Map<String, String> visit(ClassDeclaration n, Map<String, String> argu) {
+  public Map<String, String> visit(ClassDeclaration n, Map<String, String> argu) throws Exception {
     String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
     ClassExtend.put(ClassName,null);  //no ClassParent
      Map<String, String> _ret=null;
@@ -142,7 +146,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f6 -> ( MethodDeclaration() )*
    * f7 -> "}"
    */
-  public Map<String, String> visit(ClassExtendsDeclaration n, Map<String, String> argu) {
+  public Map<String, String> visit(ClassExtendsDeclaration n, Map<String, String> argu) throws Exception {
     String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
     String ClassParent = n.f3.accept(this, argu).keySet().toArray()[0].toString();
     ClassExtend.put(ClassName,ClassParent);
@@ -182,7 +186,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f1 -> Identifier()
    * f2 -> ";"
    */
-  public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) {
+  public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) throws Exception {
     String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
     String Identifier =n.f1.accept(this, argu).keySet().toArray()[0].toString();
     argu.put(Identifier,Type);
@@ -206,7 +210,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f11 -> ";"
    * f12 -> "}"
    */
-  public Map<String, String> visit(MethodDeclaration n, Map<String, String> argu) {
+  public Map<String, String> visit(MethodDeclaration n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      String ReturnType = n.f1.accept(this, argu).keySet().toArray()[0].toString();
@@ -256,7 +260,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f0 -> FormalParameter()
    * f1 -> FormalParameterTail()
    */
-  public Map<String, String> visit(FormalParameterList n, Map<String, String> argu) {
+  public Map<String, String> visit(FormalParameterList n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
      Map <String, String> Arguments = new LinkedHashMap<String, String>();  //to keep insertions in order because argument types
      n.f0.accept(this, Arguments);
@@ -268,7 +272,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f0 -> Type()
    * f1 -> Identifier()
    */
-  public Map<String, String> visit(FormalParameter n, Map<String, String> argu) {
+  public Map<String, String> visit(FormalParameter n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
      String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
      String Identifier = n.f1.accept(this, argu).keySet().toArray()[0].toString();
@@ -281,7 +285,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
    * f1 -> "["
    * f2 -> "]"
    */
-  public Map<String, String> visit(ArrayType n, Map<String, String> argu) {
+  public Map<String, String> visit(ArrayType n, Map<String, String> argu) throws Exception {
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      n.f1.accept(this, argu);
@@ -294,7 +298,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   /**
    * f0 -> "boolean"
    */
-  public Map<String, String> visit(BooleanType n, Map<String, String> argu) {
+  public Map<String, String> visit(BooleanType n, Map<String, String> argu) throws Exception {
      n.f0.accept(this, argu);
      Map<String, String> BooleanType = new HashMap<String, String>();
      BooleanType.put("BooleanType",null);
@@ -304,7 +308,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   /**
    * f0 -> "int"
    */
-  public Map<String, String> visit(IntegerType n, Map<String, String> argu) {
+  public Map<String, String> visit(IntegerType n, Map<String, String> argu) throws Exception {
      n.f0.accept(this, argu);
      Map<String, String> IntegerType = new HashMap<String, String>();
      IntegerType.put("IntegerType",null);
@@ -314,7 +318,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   /**
    * f0 -> <IDENTIFIER>
    */
-  public Map<String, String> visit(Identifier n, Map<String, String> argu) {
+  public Map<String, String> visit(Identifier n, Map<String, String> argu) throws Exception {
      //return n.f0.accept(this, argu);
      Map<String, String> Identifier = new HashMap<String, String>();
      Identifier.put(n.f0.toString(),null);
