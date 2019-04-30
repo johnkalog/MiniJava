@@ -16,14 +16,8 @@ class Main {
 	    System.err.println("Program parsed successfully.");
 	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
 	    Goal root = parser.Goal();
-      try{
-	      System.out.println(root.accept(SymbolTable, null));
-        SymbolTable.printSymbolTable();
-      }
-      catch(Exception e){ //because that throw the SymbolTableVisitor class
-        System.out.println("Semantic error");
-        System.out.println(e.getMessage()); //overrided at files in folder semantic
-      }
+      System.out.println(root.accept(SymbolTable, null));
+      SymbolTable.printSymbolTable();
 	}
 	catch(ParseException ex){
 	    System.out.println(ex.getMessage());
@@ -31,6 +25,10 @@ class Main {
 	catch(FileNotFoundException ex){
 	    System.err.println(ex.getMessage());
 	}
+  catch(Exception e){ //because that throw the SymbolTableVisitor class
+    System.out.println("Semantic error");
+    System.out.println(e.getMessage()); //overrided at files in folder semantic
+  }
 	finally{
 	    try{
 		if(fis != null) fis.close();

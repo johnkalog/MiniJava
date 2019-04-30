@@ -18,6 +18,15 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
 
   }
 
+  public void KeepTypes(ArrayList <String> myList){ //keep only types
+    for ( int i=0; i<myList.size(); i++ ){
+      String value = myList.get(i);
+      if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType" ){
+        myList.remove(value);
+      }
+    }
+  }
+
   public void printSymbolTable(){
     System.out.println("ClassExtend\n"+ClassExtend+"\n-----------------------");
     System.out.println("ClassFields\n"+ClassFields+"\n-----------------------");
@@ -241,6 +250,24 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
        });
      }
      ReturnArguments.add(0,ReturnType); //first is ReturnType
+     String ClassParent = ClassExtend.get(ClassName);
+     if ( ClassParent!=null ){ //if has parent check for method if exists at super
+       ArrayList<String> ParentFunctionInfo = new ArrayList<String>();
+       ParentFunctionInfo.add(MethodName);
+       ParentFunctionInfo.add(ClassParent);
+       if ( FunctionTypes.containsKey(ParentFunctionInfo) ){  //method exists also at parent
+         ArrayList<String> AllArgumentsOnlyValues = new ArrayList<String>(ReturnArguments); //copy
+         ArrayList<String> ParentAllArgumentsOnlyValues = new ArrayList<String>(FunctionTypes.get(ParentFunctionInfo));
+         KeepTypes(AllArgumentsOnlyValues);
+         KeepTypes(ParentAllArgumentsOnlyValues);
+         if ( !AllArgumentsOnlyValues.equals(ParentAllArgumentsOnlyValues) ){
+           throw new OverridePrototype(MethodName,ClassName,ClassParent);
+         }
+       }
+     }
+     if ( FunctionTypes.containsKey(FunctionInfo) ){  //works for ArrayList key because containsKey uses equals function
+       throw new OverloadFunction(MethodName,ClassName);
+     }
      FunctionTypes.put(FunctionInfo,ReturnArguments);
      n.f5.accept(this, argu);
      n.f6.accept(this, argu);
