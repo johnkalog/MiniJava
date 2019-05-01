@@ -1,6 +1,7 @@
 import syntaxtree.*;
 import visitor.*;
 import java.io.*;
+import java.util.*;
 import semantic.*;
 
 class Main {
@@ -19,7 +20,10 @@ class Main {
     	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
     	    Goal root = parser.Goal();
           root.accept(SymbolTable, null);
-          SymbolTable.printSymbolTable();
+          // SymbolTable.printSymbolTable();
+          Map<String, String> ClassExtend = SymbolTable.getClassExtend();
+          TypeCheckingVisitor TypeChecking = new TypeCheckingVisitor();
+          root.accept(TypeChecking, null);
     	}
     	catch(ParseException ex){
     	    System.out.println(ex.getMessage());

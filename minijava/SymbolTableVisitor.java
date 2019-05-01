@@ -5,10 +5,10 @@ import semantic.*;
 
 public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<String, String>>{
 
-  private Map<String, String> ClassExtend;  //ClassName,ClassParent
-  private Map<ArrayList <String>, String> ClassFields;  //[Identifier ClassName] Type
-  private Map<ArrayList <String>, String> FunctionFields; //[Identifier MethodName ClassName] Type
-  private Map<ArrayList <String>, ArrayList<String>> FunctionTypes; //[MethodName ClassName] [ReturnType ArgumentIdentifier1 ArgumentType1 ...ArgumentIdentifiern ArgumentTypen]
+  public static Map<String, String> ClassExtend;  //ClassName,ClassParent
+  public static Map<ArrayList <String>, String> ClassFields;  //[Identifier ClassName] Type
+  public static Map<ArrayList <String>, String> FunctionFields; //[Identifier MethodName ClassName] Type
+  public static Map<ArrayList <String>, ArrayList<String>> FunctionTypes; //[MethodName ClassName] [ReturnType ArgumentIdentifier1 ArgumentType1 ...ArgumentIdentifiern ArgumentTypen]
 
   public SymbolTableVisitor(){
     ClassExtend = new HashMap<String, String>();
@@ -16,23 +16,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     FunctionFields = new HashMap<ArrayList <String>, String>();
     FunctionTypes = new HashMap<ArrayList <String>, ArrayList<String>>();
   }
-
-  public Map<String, String> getClassExtend(){
-    return this.ClassExtend;
-  }
-
-  public Map<ArrayList <String>, String> getClassFields(){
-    return this.ClassFields;
-  }
-
-  public Map<ArrayList <String>, String> getFunctionFields(){
-    return this.FunctionFields;
-  }
-
-  public Map<ArrayList <String>, ArrayList<String>> getFunctionTypes(){
-    return this.FunctionTypes;
-  }
-
+  
   public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
     for ( ArrayList <String> key : ClassFields.keySet() ){
       if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType "){
