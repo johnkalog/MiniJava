@@ -3,7 +3,7 @@ import visitor.GJDepthFirst;
 import java.util.*;
 import semantic.*;
 
-public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
+public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
 
   public static Map<String, String> ClassExtend;
   public static Map<ArrayList <String>, String> ClassFields;
@@ -22,8 +22,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> ( TypeDeclaration() )*
     * f2 -> <EOF>
     */
-   public R visit(Goal n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(Goal n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -50,8 +50,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f16 -> "}"
     * f17 -> "}"
     */
-   public R visit(MainClass n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(MainClass n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -77,7 +77,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> ClassDeclaration()
     *       | ClassExtendsDeclaration()
     */
-   public R visit(TypeDeclaration n, A argu) throws Exception {
+   public String visit(TypeDeclaration n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -89,8 +89,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f4 -> ( MethodDeclaration() )*
     * f5 -> "}"
     */
-   public R visit(ClassDeclaration n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ClassDeclaration n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -110,8 +110,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f6 -> ( MethodDeclaration() )*
     * f7 -> "}"
     */
-   public R visit(ClassExtendsDeclaration n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ClassExtendsDeclaration n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -128,8 +128,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> Identifier()
     * f2 -> ";"
     */
-   public R visit(VarDeclaration n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(VarDeclaration n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -151,8 +151,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f11 -> ";"
     * f12 -> "}"
     */
-   public R visit(MethodDeclaration n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(MethodDeclaration n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -173,8 +173,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> FormalParameter()
     * f1 -> FormalParameterTail()
     */
-   public R visit(FormalParameterList n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(FormalParameterList n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
@@ -184,8 +184,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> Type()
     * f1 -> Identifier()
     */
-   public R visit(FormalParameter n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(FormalParameter n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
@@ -194,7 +194,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
    /**
     * f0 -> ( FormalParameterTerm() )*
     */
-   public R visit(FormalParameterTail n, A argu) throws Exception {
+   public String visit(FormalParameterTail n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -202,8 +202,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> ","
     * f1 -> FormalParameter()
     */
-   public R visit(FormalParameterTerm n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(FormalParameterTerm n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
@@ -215,7 +215,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     *       | IntegerType()
     *       | Identifier()
     */
-   public R visit(Type n, A argu) throws Exception {
+   public String visit(Type n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -224,8 +224,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "["
     * f2 -> "]"
     */
-   public R visit(ArrayType n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ArrayType n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -235,14 +235,14 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
    /**
     * f0 -> "boolean"
     */
-   public R visit(BooleanType n, A argu) throws Exception {
+   public String visit(BooleanType n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
    /**
     * f0 -> "int"
     */
-   public R visit(IntegerType n, A argu) throws Exception {
+   public String visit(IntegerType n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -254,7 +254,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     *       | WhileStatement()
     *       | PrintStatement()
     */
-   public R visit(Statement n, A argu) throws Exception {
+   public String visit(Statement n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -263,8 +263,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> ( Statement() )*
     * f2 -> "}"
     */
-   public R visit(Block n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(Block n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -277,8 +277,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f2 -> Expression()
     * f3 -> ";"
     */
-   public R visit(AssignmentStatement n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(AssignmentStatement n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -295,8 +295,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f5 -> Expression()
     * f6 -> ";"
     */
-   public R visit(ArrayAssignmentStatement n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ArrayAssignmentStatement n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -316,8 +316,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f5 -> "else"
     * f6 -> Statement()
     */
-   public R visit(IfStatement n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(IfStatement n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -335,8 +335,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f3 -> ")"
     * f4 -> Statement()
     */
-   public R visit(WhileStatement n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(WhileStatement n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -352,8 +352,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f3 -> ")"
     * f4 -> ";"
     */
-   public R visit(PrintStatement n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(PrintStatement n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -373,7 +373,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     *       | MessageSend()
     *       | Clause()
     */
-   public R visit(Expression n, A argu) throws Exception {
+   public String visit(Expression n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -382,8 +382,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "&&"
     * f2 -> Clause()
     */
-   public R visit(AndExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(AndExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -395,8 +395,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "<"
     * f2 -> PrimaryExpression()
     */
-   public R visit(CompareExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(CompareExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -408,8 +408,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "+"
     * f2 -> PrimaryExpression()
     */
-   public R visit(PlusExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(PlusExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -421,8 +421,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "-"
     * f2 -> PrimaryExpression()
     */
-   public R visit(MinusExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(MinusExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -434,8 +434,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "*"
     * f2 -> PrimaryExpression()
     */
-   public R visit(TimesExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(TimesExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -448,8 +448,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f2 -> PrimaryExpression()
     * f3 -> "]"
     */
-   public R visit(ArrayLookup n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ArrayLookup n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -462,8 +462,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> "."
     * f2 -> "length"
     */
-   public R visit(ArrayLength n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ArrayLength n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -478,8 +478,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f4 -> ( ExpressionList() )?
     * f5 -> ")"
     */
-   public R visit(MessageSend n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(MessageSend n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -493,8 +493,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> Expression()
     * f1 -> ExpressionTail()
     */
-   public R visit(ExpressionList n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ExpressionList n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
@@ -503,7 +503,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
    /**
     * f0 -> ( ExpressionTerm() )*
     */
-   public R visit(ExpressionTail n, A argu) throws Exception {
+   public String visit(ExpressionTail n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -511,8 +511,8 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> ","
     * f1 -> Expression()
     */
-   public R visit(ExpressionTerm n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ExpressionTerm n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
@@ -522,7 +522,7 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f0 -> NotExpression()
     *       | PrimaryExpression()
     */
-   public R visit(Clause n, A argu) throws Exception {
+   public String visit(Clause n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -536,43 +536,43 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     *       | AllocationExpression()
     *       | BracketExpression()
     */
-   public R visit(PrimaryExpression n, A argu) throws Exception {
+   public String visit(PrimaryExpression n, String argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
    /**
     * f0 -> <INTEGER_LITERAL>
     */
-   public R visit(IntegerLiteral n, A argu) throws Exception {
-      return n.f0.accept(this, argu);
+   public String visit(IntegerLiteral n, String argu) throws Exception {
+      return "IntegerType";
    }
 
    /**
     * f0 -> "true"
     */
-   public R visit(TrueLiteral n, A argu) throws Exception {
-      return n.f0.accept(this, argu);
+   public String visit(TrueLiteral n, String argu) throws Exception {
+      return "BooleanType";
    }
 
    /**
     * f0 -> "false"
     */
-   public R visit(FalseLiteral n, A argu) throws Exception {
-      return n.f0.accept(this, argu);
+   public String visit(FalseLiteral n, String argu) throws Exception {
+      return "BooleanType";
    }
 
    /**
     * f0 -> <IDENTIFIER>
     */
-   public R visit(Identifier n, A argu) throws Exception {
-      return n.f0.accept(this, argu);
+   public String visit(Identifier n, String argu) throws Exception {
+      return n.f0.toString();
    }
 
    /**
     * f0 -> "this"
     */
-   public R visit(ThisExpression n, A argu) throws Exception {
-      return n.f0.accept(this, argu);
+   public String visit(ThisExpression n, String argu) throws Exception {
+      return "this";
    }
 
    /**
@@ -582,14 +582,17 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f3 -> Expression()
     * f4 -> "]"
     */
-   public R visit(ArrayAllocationExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(ArrayAllocationExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
-      n.f3.accept(this, argu);
+      String Type = n.f3.accept(this, argu);
+      // if ( Type!="IntegerType" ){  //---
+      //
+      // }
       n.f4.accept(this, argu);
-      return _ret;
+      return "ArrayType";
    }
 
    /**
@@ -598,24 +601,26 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f2 -> "("
     * f3 -> ")"
     */
-   public R visit(AllocationExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(AllocationExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
+      String Identifier = n.f1.accept(this, argu);
+      if ( !ClassExtend.containsKey(Identifier) ){
+        throw new UnknownNewClass(Identifier);
+      }
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      return _ret;
+      return Identifier;
    }
 
    /**
     * f0 -> "!"
     * f1 -> Clause()
     */
-   public R visit(NotExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(NotExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
-      return _ret;
+      return n.f1.accept(this, argu);
    }
 
    /**
@@ -623,12 +628,12 @@ public class TypeCheckingVisitor<R,A> extends GJDepthFirst<R,A>{
     * f1 -> Expression()
     * f2 -> ")"
     */
-   public R visit(BracketExpression n, A argu) throws Exception {
-      R _ret=null;
+   public String visit(BracketExpression n, String argu) throws Exception {
+      String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
+      String Type = n.f1.accept(this, argu);
       n.f2.accept(this, argu);
-      return _ret;
+      return Type;
    }
 
 }

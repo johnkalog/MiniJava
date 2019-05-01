@@ -21,7 +21,6 @@ class Main {
     	    Goal root = parser.Goal();
           root.accept(SymbolTable, null);
           // SymbolTable.printSymbolTable();
-          Map<String, String> ClassExtend = SymbolTable.getClassExtend();
           TypeCheckingVisitor TypeChecking = new TypeCheckingVisitor();
           root.accept(TypeChecking, null);
     	}
