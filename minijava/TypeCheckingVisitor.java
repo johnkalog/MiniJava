@@ -53,12 +53,16 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MainClass n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
+      String ClassName = n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
+      String MethodName = "main";
+      ArrayList<String> Scope = new ArrayList<String>();
+      Scope.add(MethodName);
+      Scope.add(ClassName);
       n.f7.accept(this, argu);
       n.f8.accept(this, argu);
       n.f9.accept(this, argu);
@@ -67,7 +71,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f12.accept(this, argu);
       n.f13.accept(this, argu);
       n.f14.accept(this, argu);
-      n.f15.accept(this, argu);
+      n.f15.accept(this, Scope);
       n.f16.accept(this, argu);
       n.f17.accept(this, argu);
       return _ret;
@@ -92,10 +96,12 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ClassDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
+      String ClassName = n.f1.accept(this, argu); //argument to MethodDeclaration
+      ArrayList<String> Scope = new ArrayList<String>();
+      Scope.add(ClassName);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      n.f4.accept(this, argu);
+      n.f4.accept(this, Scope); //for scope knowledge
       n.f5.accept(this, argu);
       return _ret;
    }
@@ -113,12 +119,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ClassExtendsDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
-      n.f1.accept(this, argu);
+      String ClassName = n.f1.accept(this, argu);
+      ArrayList<String> Scope = new ArrayList<String>();
+      Scope.add(ClassName);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
-      n.f6.accept(this, argu);
+      n.f6.accept(this, Scope);
       n.f7.accept(this, argu);
       return _ret;
    }
@@ -152,18 +160,22 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     * f12 -> "}"
     */
    public String visit(MethodDeclaration n, ArrayList<String> argu) throws Exception {
+      String ClassName = argu.get(0);
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
+      String MethodName = n.f2.accept(this, argu);
+      ArrayList<String> Scope = new ArrayList<String>();
+      Scope.add(MethodName);
+      Scope.add(ClassName);
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
       n.f7.accept(this, argu);
-      n.f8.accept(this, argu);
+      n.f8.accept(this, Scope);
       n.f9.accept(this, argu);
-      n.f10.accept(this, argu);
+      n.f10.accept(this, Scope);  //also needs here for type errors
       n.f11.accept(this, argu);
       n.f12.accept(this, argu);
       return _ret;
