@@ -3,7 +3,7 @@ import visitor.GJDepthFirst;
 import java.util.*;
 import semantic.*;
 
-public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
+public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
 
   public static Map<String, String> ClassExtend;
   public static Map<ArrayList <String>, String> ClassFields;
@@ -22,7 +22,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> ( TypeDeclaration() )*
     * f2 -> <EOF>
     */
-   public String visit(Goal n, String argu) throws Exception {
+   public String visit(Goal n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -50,7 +50,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f16 -> "}"
     * f17 -> "}"
     */
-   public String visit(MainClass n, String argu) throws Exception {
+   public String visit(MainClass n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -77,7 +77,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> ClassDeclaration()
     *       | ClassExtendsDeclaration()
     */
-   public String visit(TypeDeclaration n, String argu) throws Exception {
+   public String visit(TypeDeclaration n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -89,7 +89,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f4 -> ( MethodDeclaration() )*
     * f5 -> "}"
     */
-   public String visit(ClassDeclaration n, String argu) throws Exception {
+   public String visit(ClassDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -110,7 +110,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f6 -> ( MethodDeclaration() )*
     * f7 -> "}"
     */
-   public String visit(ClassExtendsDeclaration n, String argu) throws Exception {
+   public String visit(ClassExtendsDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -128,7 +128,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> Identifier()
     * f2 -> ";"
     */
-   public String visit(VarDeclaration n, String argu) throws Exception {
+   public String visit(VarDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -151,7 +151,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f11 -> ";"
     * f12 -> "}"
     */
-   public String visit(MethodDeclaration n, String argu) throws Exception {
+   public String visit(MethodDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -173,7 +173,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> FormalParameter()
     * f1 -> FormalParameterTail()
     */
-   public String visit(FormalParameterList n, String argu) throws Exception {
+   public String visit(FormalParameterList n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -184,7 +184,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> Type()
     * f1 -> Identifier()
     */
-   public String visit(FormalParameter n, String argu) throws Exception {
+   public String visit(FormalParameter n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -194,7 +194,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
    /**
     * f0 -> ( FormalParameterTerm() )*
     */
-   public String visit(FormalParameterTail n, String argu) throws Exception {
+   public String visit(FormalParameterTail n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -202,7 +202,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> ","
     * f1 -> FormalParameter()
     */
-   public String visit(FormalParameterTerm n, String argu) throws Exception {
+   public String visit(FormalParameterTerm n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -215,7 +215,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     *       | IntegerType()
     *       | Identifier()
     */
-   public String visit(Type n, String argu) throws Exception {
+   public String visit(Type n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -224,7 +224,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "["
     * f2 -> "]"
     */
-   public String visit(ArrayType n, String argu) throws Exception {
+   public String visit(ArrayType n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -235,14 +235,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
    /**
     * f0 -> "boolean"
     */
-   public String visit(BooleanType n, String argu) throws Exception {
+   public String visit(BooleanType n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
    /**
     * f0 -> "int"
     */
-   public String visit(IntegerType n, String argu) throws Exception {
+   public String visit(IntegerType n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -254,7 +254,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     *       | WhileStatement()
     *       | PrintStatement()
     */
-   public String visit(Statement n, String argu) throws Exception {
+   public String visit(Statement n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -263,7 +263,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> ( Statement() )*
     * f2 -> "}"
     */
-   public String visit(Block n, String argu) throws Exception {
+   public String visit(Block n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -277,7 +277,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f2 -> Expression()
     * f3 -> ";"
     */
-   public String visit(AssignmentStatement n, String argu) throws Exception {
+   public String visit(AssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -295,7 +295,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f5 -> Expression()
     * f6 -> ";"
     */
-   public String visit(ArrayAssignmentStatement n, String argu) throws Exception {
+   public String visit(ArrayAssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -316,7 +316,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f5 -> "else"
     * f6 -> Statement()
     */
-   public String visit(IfStatement n, String argu) throws Exception {
+   public String visit(IfStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -335,7 +335,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f3 -> ")"
     * f4 -> Statement()
     */
-   public String visit(WhileStatement n, String argu) throws Exception {
+   public String visit(WhileStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -352,7 +352,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f3 -> ")"
     * f4 -> ";"
     */
-   public String visit(PrintStatement n, String argu) throws Exception {
+   public String visit(PrintStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -373,7 +373,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     *       | MessageSend()
     *       | Clause()
     */
-   public String visit(Expression n, String argu) throws Exception {
+   public String visit(Expression n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -382,7 +382,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "&&"
     * f2 -> Clause()
     */
-   public String visit(AndExpression n, String argu) throws Exception {
+   public String visit(AndExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
       if ( TypeLeft!="BooleanType" ){
@@ -401,7 +401,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "<"
     * f2 -> PrimaryExpression()
     */
-   public String visit(CompareExpression n, String argu) throws Exception {
+   public String visit(CompareExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
       if ( TypeLeft!="IntegerType" ){
@@ -412,7 +412,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
       if ( TypeRight!="IntegerType" ){
         throw new InvalidComparePart("right");
       }
-      return _ret;
+      return "BooleanType";
    }
 
    /**
@@ -420,7 +420,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "+"
     * f2 -> PrimaryExpression()
     */
-   public String visit(PlusExpression n, String argu) throws Exception {
+   public String visit(PlusExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -433,7 +433,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "-"
     * f2 -> PrimaryExpression()
     */
-   public String visit(MinusExpression n, String argu) throws Exception {
+   public String visit(MinusExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -446,7 +446,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "*"
     * f2 -> PrimaryExpression()
     */
-   public String visit(TimesExpression n, String argu) throws Exception {
+   public String visit(TimesExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -460,7 +460,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f2 -> PrimaryExpression()
     * f3 -> "]"
     */
-   public String visit(ArrayLookup n, String argu) throws Exception {
+   public String visit(ArrayLookup n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -474,7 +474,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> "."
     * f2 -> "length"
     */
-   public String visit(ArrayLength n, String argu) throws Exception {
+   public String visit(ArrayLength n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -490,7 +490,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f4 -> ( ExpressionList() )?
     * f5 -> ")"
     */
-   public String visit(MessageSend n, String argu) throws Exception {
+   public String visit(MessageSend n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -505,7 +505,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> Expression()
     * f1 -> ExpressionTail()
     */
-   public String visit(ExpressionList n, String argu) throws Exception {
+   public String visit(ExpressionList n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -515,7 +515,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
    /**
     * f0 -> ( ExpressionTerm() )*
     */
-   public String visit(ExpressionTail n, String argu) throws Exception {
+   public String visit(ExpressionTail n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -523,7 +523,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> ","
     * f1 -> Expression()
     */
-   public String visit(ExpressionTerm n, String argu) throws Exception {
+   public String visit(ExpressionTerm n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -534,7 +534,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> NotExpression()
     *       | PrimaryExpression()
     */
-   public String visit(Clause n, String argu) throws Exception {
+   public String visit(Clause n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
@@ -548,42 +548,42 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     *       | AllocationExpression()
     *       | BracketExpression()
     */
-   public String visit(PrimaryExpression n, String argu) throws Exception {
+   public String visit(PrimaryExpression n, ArrayList<String> argu) throws Exception {
       return n.f0.accept(this, argu);
    }
 
    /**
     * f0 -> <INTEGER_LITERAL>
     */
-   public String visit(IntegerLiteral n, String argu) throws Exception {
+   public String visit(IntegerLiteral n, ArrayList<String> argu) throws Exception {
       return "IntegerType";
    }
 
    /**
     * f0 -> "true"
     */
-   public String visit(TrueLiteral n, String argu) throws Exception {
+   public String visit(TrueLiteral n, ArrayList<String> argu) throws Exception {
       return "BooleanType";
    }
 
    /**
     * f0 -> "false"
     */
-   public String visit(FalseLiteral n, String argu) throws Exception {
+   public String visit(FalseLiteral n, ArrayList<String> argu) throws Exception {
       return "BooleanType";
    }
 
    /**
     * f0 -> <IDENTIFIER>
     */
-   public String visit(Identifier n, String argu) throws Exception {
+   public String visit(Identifier n, ArrayList<String> argu) throws Exception {
       return n.f0.toString();
    }
 
    /**
     * f0 -> "this"
     */
-   public String visit(ThisExpression n, String argu) throws Exception {
+   public String visit(ThisExpression n, ArrayList<String> argu) throws Exception {
       return "this";
    }
 
@@ -594,7 +594,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f3 -> Expression()
     * f4 -> "]"
     */
-   public String visit(ArrayAllocationExpression n, String argu) throws Exception {
+   public String visit(ArrayAllocationExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
@@ -613,7 +613,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f2 -> "("
     * f3 -> ")"
     */
-   public String visit(AllocationExpression n, String argu) throws Exception {
+   public String visit(AllocationExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       String Identifier = n.f1.accept(this, argu);
@@ -629,7 +629,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f0 -> "!"
     * f1 -> Clause()
     */
-   public String visit(NotExpression n, String argu) throws Exception {
+   public String visit(NotExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       String Type = n.f1.accept(this, argu);
@@ -644,7 +644,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     * f1 -> Expression()
     * f2 -> ")"
     */
-   public String visit(BracketExpression n, String argu) throws Exception {
+   public String visit(BracketExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
       String Type = n.f1.accept(this, argu);

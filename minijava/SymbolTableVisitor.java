@@ -16,7 +16,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     FunctionFields = new HashMap<ArrayList <String>, String>();
     FunctionTypes = new HashMap<ArrayList <String>, ArrayList<String>>();
   }
-  
+
   public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
     for ( ArrayList <String> key : ClassFields.keySet() ){
       if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType "){
@@ -109,22 +109,31 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      n.f8.accept(this, argu);
      n.f9.accept(this, argu);
      n.f10.accept(this, argu);
-     n.f11.accept(this, argu);
+     String Type = n.f11.accept(this, argu).keySet().toArray()[0].toString();
      n.f12.accept(this, argu);
      n.f13.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>(); //Identifier key with value it's type
      if ( n.f14.present() ){  //if there is VarDeclaration
        n.f14.accept(this, IdentifierType);  //passed as argument to f14 to put values
        IdentifierType.forEach((key, value) -> { //lamda function to add Map contents
-         ArrayList<String> IdentifierClass = new ArrayList<String>();
-         IdentifierClass.add(key);
-         IdentifierClass.add(ClassName);
-         ClassFields.put(IdentifierClass,value);
+         ArrayList<String> IdentifierFunctionClass = new ArrayList<String>();
+         IdentifierFunctionClass.add(key);
+         IdentifierFunctionClass.add("main");
+         IdentifierFunctionClass.add(ClassName);
+         FunctionFields.put(IdentifierFunctionClass,value);
        });
      }
      else{
        //System.out.println("No VarDeclaration for MainClass");
      }
+     ArrayList<String> FunctionClass = new ArrayList<String>();
+     FunctionClass.add("main");
+     FunctionClass.add(ClassName);
+     ArrayList<String> AllArguments = new ArrayList<String>();
+     AllArguments.add("IntegerType"); //it is void but insert this to avoid type checking in function CheckClassTypes
+     AllArguments.add(Type);  //Identifier in args
+     AllArguments.add("IntegerType"); //although it is String[]
+     FunctionTypes.put(FunctionClass,AllArguments);
      n.f15.accept(this, argu);
      n.f16.accept(this, argu);
      n.f17.accept(this, argu);

@@ -20,7 +20,7 @@ class Main {
     	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
     	    Goal root = parser.Goal();
           root.accept(SymbolTable, null);
-          // SymbolTable.printSymbolTable();
+          SymbolTable.printSymbolTable();
           TypeCheckingVisitor TypeChecking = new TypeCheckingVisitor();
           root.accept(TypeChecking, null);
     	}
