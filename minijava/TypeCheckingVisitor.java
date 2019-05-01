@@ -384,10 +384,16 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     */
    public String visit(AndExpression n, String argu) throws Exception {
       String _ret=null;
-      n.f0.accept(this, argu);
+      String TypeLeft = n.f0.accept(this, argu);
+      if ( TypeLeft!="BooleanType" ){
+        throw new InvalidAndPart("left");
+      }
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
-      return _ret;
+      String TypeRight = n.f2.accept(this, argu);
+      if ( TypeRight!="BooleanType" ){
+        throw new InvalidAndPart("right");
+      }
+      return "BooleanType";
    }
 
    /**
@@ -397,9 +403,15 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
     */
    public String visit(CompareExpression n, String argu) throws Exception {
       String _ret=null;
-      n.f0.accept(this, argu);
+      String TypeLeft = n.f0.accept(this, argu);
+      if ( TypeLeft!="IntegerType" ){
+        throw new InvalidComparePart("left");
+      }
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
+      String TypeRight = n.f2.accept(this, argu);
+      if ( TypeRight!="IntegerType" ){
+        throw new InvalidComparePart("right");
+      }
       return _ret;
    }
 
@@ -620,7 +632,11 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,String>{
    public String visit(NotExpression n, String argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
-      return n.f1.accept(this, argu);
+      String Type = n.f1.accept(this, argu);
+      if ( Type!="BooleanType" ){
+        throw new InvalidNotPart();
+      }
+      return "BooleanType";
    }
 
    /**
