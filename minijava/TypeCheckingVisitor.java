@@ -17,27 +17,115 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     this.FunctionTypes = SymbolTableVisitor.FunctionTypes;
   }
 
-  public ArrayList<String> getType(String Identifier){  //[Identifier MethodName ClassName Type] null is something misses
-    ArrayList<String> Type = new ArrayList<String>();
-    for ( ArrayList <String> key : FunctionFields.keySet() ){ //first check if declared in function scope may shadow classe's field
-      if ( key.get(0)==Identifier ){
-        Type.add(Identifier);
-        Type.add(key.get(1));
-        Type.add(key.get(2));
-        Type.add(FunctionFields.get(key));  //Type
-        return Type;
+  // public ArrayList<String> getType(String Identifier){  //[Identifier MethodName ClassName Type] null is something misses
+  //   ArrayList<String> Type = new ArrayList<String>();
+  //   for ( ArrayList <String> key : FunctionFields.keySet() ){ //first check if declared in function scope may shadow classe's field
+  //     if ( key.get(0)==Identifier ){
+  //       Type.add(Identifier);
+  //       Type.add(key.get(1));
+  //       Type.add(key.get(2));
+  //       Type.add(FunctionFields.get(key));  //Type
+  //       return Type;
+  //     }
+  //   }
+  //   for ( ArrayList <String> key : FunctionTypes.keySet() ){  //after check at parameter list
+  //
+  //   }
+  //   for ( ArrayList <String> key : ClassFields.keySet() ){  //check in the class fields
+  //     if ( key.get(0)==Identifier ){
+  //       Type.add(Identifier);
+  //       Type.add(null); //method doesn't exist
+  //       Type.add(key.get(1));
+  //       Type.add(ClassFields.get(key));
+  //       return Type;
+  //     }
+  //   }
+  //   return null;  //nowhere found
+  // }
+
+  public String checkScope(String Identifier,ArrayList <String> argu) throws Exception{ //returns Type of the Identifier in the same scope of argu else null
+    String MethodName = argu.get(0);
+    String ClassName = argu.get(1);
+    ArrayList <String> tmp = new ArrayList <String>();
+    tmp.add(Identifier);
+    tmp.add(MethodName);
+    tmp.add(ClassName);
+    String Type = FunctionFields.get(tmp);  //first check if declared in function scope may shadow classe's field
+    if ( Type!=null ){
+      return Type;
+    }
+    tmp.clear();
+    tmp.add(MethodName);
+    tmp.add(ClassName);
+    ArrayList <String> AllArguments = new ArrayList <String>();
+    AllArguments = FunctionTypes.get(tmp);  //after check at parameter list
+    if ( AllArguments!=null ){
+      int index=AllArguments.indexOf(Identifier);
+      if ( index!=-1 ){
+        return AllArguments.get(index+1);
       }
     }
-    for ( ArrayList <String> key : ClassFields.keySet() ){  //check in the class fields
-      if ( key.get(0)==Identifier ){
-        Type.add(Identifier);
-        Type.add(null); //method doesn't exist
-        Type.add(key.get(1));
-        Type.add(ClassFields.get(key));
+    tmp.clear();
+    tmp.add(Identifier);
+    tmp.add(ClassName);
+    Type = ClassFields.get(tmp);
+    if ( Type!=null ){  //check then in the class fields
+      return Type;
+    }
+    String ClassParent = ClassExtend.get(ClassName);
+    if ( ClassParent==null ){
+      return null;
+    }
+    while ( ClassParent!=null ){  //at the end check in the class parents
+      tmp.clear();
+      tmp.add(Identifier);
+      tmp.add(ClassParent);
+      Type = ClassFields.get(tmp);
+      if ( Type!=null ){
         return Type;
       }
+      ClassParent = ClassExtend.get(ClassParent);
     }
-    return null;  //nowhere found
+
+    // for ( ArrayList <String> key : FunctionFields.keySet() ){ //first check if declared in function scope may shadow classe's field
+    //   if ( key.get(0)==Identifier && key.get(1)==MethodName && key.get(2)==ClassName ){
+    //     return FunctionFields.get(key);
+    //   }
+    // }
+    // for ( ArrayList <String> key : FunctionTypes.keySet() ){  //after check at parameter list
+    //   if ( key.get(0)==MethodName && key.get(1)==ClassName ){
+    //     ArrayList <String> AllArguments = FunctionTypes.get(key);
+    //     int index=AllArguments.indexOf(Identifier);
+    //     if ( index!=-1 ){
+    //       return AllArguments.get(index+1);
+    //     }
+    //   }
+    // }
+    // for ( ArrayList <String> key : ClassFields.keySet() ){  //check in the class fields
+    //   if ( key.get(0)==Identifier && key.get(1)==ClassName ){
+    //     return ClassFields.get(key);
+    //   }
+    // }
+    // String ClassParent = ClassExtend.get();
+    // for ( ArrayList <String> key : ClassExtend.keySet() ){  //at the end check in the class parents
+    //   if ( key==Identifier ){
+    //     if ( ClassExtend.get(key)==null ){  //class hasn't parent
+    //       return null;
+    //     }
+    //     else{
+    //       ClassParent = ClassExtend.get(key); //parent
+    //     }
+    //   }
+    // }
+    // while ( ClassParent!=null ){
+    //   for ( ArrayList <String> key : ClassFields.keySet() ){  //check in the class fields
+    //     if ( key.get(0)==Identifier && key.get(1)==ClassParent ){
+    //       return ClassFields.get(key);
+    //     }
+    //   }
+    //   ClassParent
+    // }
+    return null;
   }
 
   // public boolean checkScope(ArrayList <String> Type,ArrayList <String> argu) throws Exception{  //if in the same scope
@@ -452,18 +540,19 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(CompareExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      ArrayList<String> Type;
+      String Type;
       String TypeLeft = n.f0.accept(this, argu);
       if ( TypeLeft!="IntegerType" ){
-        Type = getType(TypeLeft);
-        if ( Type.get(3)!="IntegerType" ){
-          throw new InvalidComparePart("left",Type.get(0),Type.get(1),Type.get(2),Type.get(3));
-        }
+        Type = checkScope(TypeLeft,argu);
+        System.out.println(Type);
+        // if ( Type.get(3)!="IntegerType" ){
+        //   throw new InvalidComparePart("left",Type.get(0),Type.get(1),Type.get(2),Type.get(3));
+        // }
       }
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
       if ( TypeRight!="IntegerType" ){
-        Type = getType(TypeRight);
+        // Type = getType(TypeRight);
       }
       return "BooleanType";
    }
