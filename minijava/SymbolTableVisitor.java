@@ -19,14 +19,14 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
 
   public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
     for ( ArrayList <String> key : ClassFields.keySet() ){
-      if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType "){
+      if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType"){
         if ( !ClassExtend.containsKey(ClassFields.get(key)) ){
           throw new UnknownIdentifierClass(key.get(0),key.get(1),ClassFields.get(key));
         }
       }
     }
     for ( ArrayList <String> key : FunctionFields.keySet() ){
-      if ( FunctionFields.get(key)!="IntegerType" && FunctionFields.get(key)!="BooleanType" && FunctionFields.get(key)!="ArrayType "){
+      if ( FunctionFields.get(key)!="IntegerType" && FunctionFields.get(key)!="BooleanType" && FunctionFields.get(key)!="ArrayType"){
         if ( !ClassExtend.containsKey(FunctionFields.get(key)) ){
           throw new UnknownIdentifierMethod(key.get(0),key.get(1),key.get(2),FunctionFields.get(key));
         }
@@ -40,7 +40,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
       KeepTypes(AllArgumentsOnlyValues);
       for ( int i=0; i<AllArgumentsOnlyValues.size(); i++ ){
         String value = AllArgumentsOnlyValues.get(i);
-        if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType "){
+        if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType"){
           if ( !ClassExtend.containsKey(value) ){
             throw new UnknownPrototypeMethod(key.get(0),key.get(1),value,i);
           }

@@ -539,7 +539,11 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(ArrayLookup n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      n.f0.accept(this, argu);
+      String ArrayName = n.f0.accept(this, argu);
+      String Type = checkScope(ArrayName,argu);
+      if ( Type!="ArrayType" ){
+        throw new NotAnArray(ArrayName,Type,argu.get(0),argu.get(1));
+      }
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
