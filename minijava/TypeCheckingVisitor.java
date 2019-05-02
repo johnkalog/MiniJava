@@ -17,6 +17,39 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     this.FunctionTypes = SymbolTableVisitor.FunctionTypes;
   }
 
+  public ArrayList<String> getType(String Identifier){  //[Identifier MethodName ClassName Type] null is something misses
+    ArrayList<String> Type = new ArrayList<String>();
+    for ( ArrayList <String> key : FunctionFields.keySet() ){ //first check if declared in function scope may shadow classe's field
+      if ( key.get(0)==Identifier ){
+        Type.add(Identifier);
+        Type.add(key.get(1));
+        Type.add(key.get(2));
+        Type.add(FunctionFields.get(key));  //Type
+        return Type;
+      }
+    }
+    for ( ArrayList <String> key : ClassFields.keySet() ){  //check in the class fields
+      if ( key.get(0)==Identifier ){
+        Type.add(Identifier);
+        Type.add(null); //method doesn't exist
+        Type.add(key.get(1));
+        Type.add(ClassFields.get(key));
+        return Type;
+      }
+    }
+    return null;  //nowhere found
+  }
+
+  // public boolean checkScope(ArrayList <String> Type,ArrayList <String> argu) throws Exception{  //if in the same scope
+  //   if ( Type==null ){
+  //     throw new DoesNotExistIdentifier(Type.get(0));
+  //   }
+  //   if ( Type.get(3)!=argu.get(2) ){  //in different class means not in samme scope
+  //     throw new NotInScope
+  //   }
+  //   return true;
+  // }
+
    /**
     * f0 -> MainClass()
     * f1 -> ( TypeDeclaration() )*
@@ -71,7 +104,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f12.accept(this, argu);
       n.f13.accept(this, argu);
       n.f14.accept(this, argu);
-      n.f15.accept(this, Scope);
+      if ( n.f15.present() ){
+        n.f15.accept(this, Scope);
+      }
       n.f16.accept(this, argu);
       n.f17.accept(this, argu);
       return _ret;
@@ -173,7 +208,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
       n.f7.accept(this, argu);
-      n.f8.accept(this, Scope);
+      if ( n.f8.present() ){
+        n.f8.accept(this, Scope);
+      }
       n.f9.accept(this, argu);
       n.f10.accept(this, Scope);  //also needs here for type errors
       n.f11.accept(this, argu);
@@ -415,14 +452,18 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(CompareExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
+      ArrayList<String> Type;
       String TypeLeft = n.f0.accept(this, argu);
       if ( TypeLeft!="IntegerType" ){
-        throw new InvalidComparePart("left");
+        Type = getType(TypeLeft);
+        if ( Type.get(3)!="IntegerType" ){
+          throw new InvalidComparePart("left",Type.get(0),Type.get(1),Type.get(2),Type.get(3));
+        }
       }
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
       if ( TypeRight!="IntegerType" ){
-        throw new InvalidComparePart("right");
+        Type = getType(TypeRight);
       }
       return "BooleanType";
    }

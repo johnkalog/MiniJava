@@ -30,6 +30,9 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
         if ( !ClassExtend.containsKey(FunctionFields.get(key)) ){
           throw new UnknownIdentifierMethod(key.get(0),key.get(1),key.get(2),FunctionFields.get(key));
         }
+        for ( ArrayList <String> FunctionInfo : FunctionTypes.keySet() ){ //in parameterlist and in VarDeclaration declared
+          ArrayList <String> AllArguments = FunctionTypes.get(FunctionInfo);
+        }
       }
     }
     for ( ArrayList <String> key : FunctionTypes.keySet() ){
@@ -40,6 +43,17 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
         if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType "){
           if ( !ClassExtend.containsKey(value) ){
             throw new UnknownPrototypeMethod(key.get(0),key.get(1),value,i);
+          }
+        }
+      }
+    }
+    for ( ArrayList <String> key : FunctionFields.keySet() ){
+      for ( ArrayList <String> FunctionInfo : FunctionTypes.keySet() ){ //in parameterlist and in VarDeclaration declared
+        ArrayList <String> AllArguments = FunctionTypes.get(FunctionInfo);
+        String FunctionVar = key.get(0);
+        if ( key.get(1)==FunctionInfo.get(0) && key.get(2)==FunctionInfo.get(1) ){  //same Method Class
+          if ( AllArguments.contains(FunctionVar) ){ //but identifier with name IntegerType?
+            throw new DeclareParameterVariable(FunctionVar,key.get(1),key.get(2));
           }
         }
       }
