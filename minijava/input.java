@@ -14,7 +14,7 @@ class A{
 }
 
 class B extends A{
-    int k;
+    boolean k;
     A type;
     public int foo(int e,int ert,boolean opi) {boolean w; boolean few; boolean d; return 6;}
     public boolean bla(int y) {int d; int j; return 5<6;}
