@@ -1,9 +1,10 @@
 package semantic;
 
 public class NotAnArray extends Exception{
-  private String Identifier, MethodName, ClassName, Type;
+  private String Operation, Identifier, MethodName, ClassName, Type;
 
-  public NotAnArray(String Identifier,String Type,String MethodName,String ClassName){
+  public NotAnArray(String Operation,String Identifier,String Type,String MethodName,String ClassName){
+    this.Operation = Operation;
     this.Identifier = Identifier;
     this.Type = Type;
     this.MethodName = MethodName;
@@ -11,6 +12,6 @@ public class NotAnArray extends Exception{
   }
 
   public String getMessage() {
-    return "Identifier: "+this.Identifier+" is: "+this.Type+" instead of: ArrayType in  method: "+this.MethodName+" in class: "+this.ClassName;
+    return "Identifier: "+this.Identifier+" is: "+this.Type+" instead of: ArrayType in "+this.Operation+" in  method: "+this.MethodName+" in class: "+this.ClassName;
   }
 }
