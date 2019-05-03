@@ -74,6 +74,20 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     return null;
   }
 
+  public boolean isPredecessor(String Type,String Identifier,String MethodName,String ClassName){
+    String ClassParent = ClassExtend.get(Identifier);
+    if ( Type==Identifier ){
+      return true;
+    }
+    while ( ClassParent!=null ){
+      if ( ClassParent==Type ){
+        return true;
+      }
+      ClassParent = ClassExtend.get(ClassParent);
+    }
+    return false;
+  }
+
   public void filterPass(String Operator,String Part,String Identifier,ArrayList<String> argu) throws Exception{  //obstacle challenge pass
     String Type;
     if ( Identifier!="IntegerType" ){
@@ -365,7 +379,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(AssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      n.f0.accept(this, argu);
+      String Identifier = n.f0.accept(this, argu);
+      String Type = checkScope(Identifier,argu);
+      argu.add(Type); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
@@ -727,9 +743,21 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( !ClassExtend.containsKey(Identifier) ){
         throw new UnknownNewClass(Identifier);
       }
+      String Type = null;
+      if ( argu.size()==3 ){  //return the type of Identifier if it is called from AssignmentStatement
+        Type = argu.get(2);
+      }
+      else if ( argu.size()==2 ){ //just the type after new
+        Type = Identifier;
+      } //for method checking in MessageSend
+      if ( argu.size()==3 ){
+        if ( !isPredecessor(Type,Identifier,argu.get(0),argu.get(1)) ){
+          throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
+        }
+      }
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      return Identifier;
+      return Type;
    }
 
    /**
