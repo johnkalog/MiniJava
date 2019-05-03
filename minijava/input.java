@@ -1,6 +1,7 @@
 class Input{
     public static void main(String[] i){
     	A a;
+      // B n1=new B();  //to n exei tou A den blepei tou B me to casting exoume kai tou B
       B b;
     }
 }
