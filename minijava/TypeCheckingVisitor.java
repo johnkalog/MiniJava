@@ -37,7 +37,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       keepVariables(AllArguments);
       int index=AllArguments.indexOf(Identifier);
       if ( index!=-1 ){
-        return FunctionTypes.get(tmp).get(index*2+2);
+        return FunctionTypes.get(tmp).get(index*2+2); //0->2 1->4 2->6 ...
       }
     }
     tmp.clear();
@@ -416,10 +416,16 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(AssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
+      if ( ClassExtend.containsKey(Identifier) ){
+        throw new NoClassAccepted(Identifier,argu.get(0),argu.get(1));
+      }
       String Type = checkScope(Identifier,argu);
       argu.add(Type); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
+      String TypeExpression = n.f2.accept(this, argu);
+      if ( TypeExpression!=Type ){
+        throw new InvalidAssign(Type,TypeExpression,argu.get(0),argu.get(1));
+      }
       n.f3.accept(this, argu);
       return _ret;
    }
