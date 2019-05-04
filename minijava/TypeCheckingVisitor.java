@@ -31,12 +31,13 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     tmp.clear();
     tmp.add(MethodName);
     tmp.add(ClassName);
-    ArrayList <String> AllArguments = new ArrayList <String>();
-    AllArguments = FunctionTypes.get(tmp);  //after check at parameter list
+    ArrayList <String> AllArguments = new ArrayList <String>(FunctionTypes.get(tmp));  //after check at parameter list
     if ( AllArguments!=null ){
+      AllArguments.remove(0);
+      keepVariables(AllArguments);
       int index=AllArguments.indexOf(Identifier);
       if ( index!=-1 ){
-        return AllArguments.get(index+1);
+        return FunctionTypes.get(tmp).get(index*2);
       }
     }
     tmp.clear();
@@ -61,6 +62,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       ClassParent = ClassExtend.get(ClassParent);
     }
     return null;
+  }
+
+  public void keepVariables(ArrayList<String> myList){  //keeps identifiers, they are at odd indexes
+    for ( int i=0; i<myList.size(); i++ ){
+      if ( i%2!=0 ){
+        myList.remove(i);
+      }
+    }
   }
 
   public ArrayList<String> checkMethod(String MethodName,String IfInClass,ArrayList<String> argu) throws Exception{ //checks if MethodName exists in IfInClass class or parent classe's
@@ -93,15 +102,28 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     return false;
   }
 
-  public void filterPass(String Operator,String Part,String Identifier,ArrayList<String> argu) throws Exception{  //obstacle challenge pass
-    String Type;
-    if ( Identifier!="IntegerType" ){
+  public void filterPass(String IntOrBoolean,String Operator,String Part,String Identifier,ArrayList<String> argu) throws Exception{  //obstacle challenge pass
+    String Type=null;
+    if ( Identifier!=IntOrBoolean ){  //for both types
+      if ( ClassExtend.containsKey(Identifier) ){  //may be ClassName
+        throw new UnexpectedClassName(Identifier,Operator,argu.get(0),argu.get(1));
+      }
+      String NotToBe = null;  //the opossite of IntOrBoolean
+      if ( IntOrBoolean=="IntegerType" ){
+        NotToBe = "BooleanType";
+      }
+      else if ( IntOrBoolean=="BooleanType" ){
+        NotToBe = "IntegerType";
+      }
+      if ( Identifier==NotToBe ){ //only these are literals otherwise identifier checked after at checkScope
+        throw new InvalidPart(IntOrBoolean,Operator,Part,Identifier,argu.get(0),argu.get(1),NotToBe);
+      }
       Type = checkScope(Identifier,argu);
       if ( Type==null ){
         throw new DifferentScope(Identifier,argu.get(0),argu.get(1));
       }
-      if ( Type!="IntegerType" ){
-        throw new InvalidPart(Operator,Part,Identifier,argu.get(0),argu.get(1),Type);
+      if ( Type!=IntOrBoolean ){
+        throw new InvalidPart(IntOrBoolean,Operator,Part,Identifier,argu.get(0),argu.get(1),Type);
       }
     }
   }
@@ -501,14 +523,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(AndExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
-      if ( TypeLeft!="BooleanType" ){
-        throw new InvalidAndPart("left");
-      }
+      filterPass("BooleanType","logical &&","left",TypeLeft,argu);
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
-      if ( TypeRight!="BooleanType" ){
-        throw new InvalidAndPart("right");
-      }
+      filterPass("BooleanType","logical &&","right",TypeRight,argu);
       return "BooleanType";
    }
 
@@ -520,10 +538,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(CompareExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
-      filterPass("compare <","left",TypeLeft,argu);
+      filterPass("IntegerType","compare <","left",TypeLeft,argu);
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
-      filterPass("compare <","right",TypeRight,argu);
+      filterPass("IntegerType","compare <","right",TypeRight,argu);
       return "BooleanType";
    }
 
@@ -535,10 +553,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(PlusExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
-      filterPass("plus +","left",TypeLeft,argu);
+      filterPass("IntegerType","plus +","left",TypeLeft,argu);
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
-      filterPass("plus +","right",TypeRight,argu);
+      filterPass("IntegerType","plus +","right",TypeRight,argu);
       return "IntegerType";
    }
 
@@ -550,10 +568,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MinusExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
-      filterPass("minus -","left",TypeLeft,argu);
+      filterPass("IntegerType","minus -","left",TypeLeft,argu);
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
-      filterPass("minus -","right",TypeRight,argu);
+      filterPass("IntegerType","minus -","right",TypeRight,argu);
       return "IntegerType";
    }
 
@@ -565,10 +583,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(TimesExpression n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String TypeLeft = n.f0.accept(this, argu);
-      filterPass("times *","left",TypeLeft,argu);
+      filterPass("IntegerType","times *","left",TypeLeft,argu);
       n.f1.accept(this, argu);
       String TypeRight = n.f2.accept(this, argu);
-      filterPass("times *","right",TypeRight,argu);
+      filterPass("IntegerType","times *","right",TypeRight,argu);
       return "IntegerType";
    }
 
@@ -581,6 +599,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ArrayLookup n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String ArrayName = n.f0.accept(this, argu);
+      if ( ClassExtend.containsKey(ArrayName) ){
+        throw new UnexpectedClassName(ArrayName,"ArrayLookup",argu.get(0),argu.get(1));
+      }
       String Type = checkScope(ArrayName,argu);
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayLookup",ArrayName,Type,argu.get(0),argu.get(1));
@@ -605,6 +626,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ArrayLength n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String ArrayName = n.f0.accept(this, argu);
+      if ( ClassExtend.containsKey(ArrayName) ){
+        throw new UnexpectedClassName(ArrayName,"ArrayLookup",argu.get(0),argu.get(1));
+      }
       String Type = checkScope(ArrayName,argu);
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayLength",ArrayName,Type,argu.get(0),argu.get(1));
@@ -808,9 +832,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       String Type = n.f1.accept(this, argu);
-      if ( Type!="BooleanType" ){
-        throw new InvalidNotPart();
-      }
+      filterPass("BooleanType","logical !","right",Type,argu);
       return "BooleanType";
    }
 
