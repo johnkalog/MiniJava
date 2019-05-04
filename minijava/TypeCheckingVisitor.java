@@ -625,14 +625,17 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MessageSend n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String ClassName = n.f0.accept(this, argu);
-      String Type = ClassName; //new ClassName() Identifier is Class
-      if ( !ClassExtend.containsKey(ClassName) ){
+      String Type = null;
+      if ( !ClassExtend.containsKey(ClassName) ){ //ClassName.MethodName() would be a problem
         if ( ClassName=="this" ){ //check in FunctionFields
           Type = argu.get(1);
         }
         else{
           Type = checkScope(ClassName,argu);
         }
+      }
+      else{
+        Type = ClassName; //new ClassName() Identifier is Class
       }
       if ( Type=="IntegerType" || Type=="BooleanType" || Type=="ArrayType" ){
         throw new UnknownObjectName(Type,argu.get(0),argu.get(1));
