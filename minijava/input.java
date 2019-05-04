@@ -18,5 +18,5 @@ class B extends A{
     int[] l;
     A n;
     public int foo(int e,int ert,boolean opi) {boolean w; boolean few; boolean d; return 6;}
-    public boolean bla() {int d; int j; B plm; return  123 + false;}
+    public boolean bla(int y) {int d; int j; B plm; return  k && false;}
 }

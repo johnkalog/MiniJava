@@ -37,7 +37,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       keepVariables(AllArguments);
       int index=AllArguments.indexOf(Identifier);
       if ( index!=-1 ){
-        return FunctionTypes.get(tmp).get(index*2);
+        return FunctionTypes.get(tmp).get(index*2+2);
       }
     }
     tmp.clear();
@@ -787,9 +787,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       String Type = n.f3.accept(this, argu);
-      // if ( Type!="IntegerType" ){  //---
-      //
-      // }
+      if ( Type!="IntegerType" ){
+        throw new InvalidAllocationIndex(argu.get(0),argu.get(1));
+      }
       n.f4.accept(this, argu);
       return "ArrayType";
    }
