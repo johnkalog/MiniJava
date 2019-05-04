@@ -417,9 +417,12 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
       if ( ClassExtend.containsKey(Identifier) ){
-        throw new NoClassAccepted(Identifier,argu.get(0),argu.get(1));
+        throw new NoClassAccepted("AssignmentStatement",Identifier,argu.get(0),argu.get(1));
       }
       String Type = checkScope(Identifier,argu);
+      if ( Type==null ){
+        throw new DifferentScope(Identifier,argu.get(0),argu.get(1));
+      }
       argu.add(Type); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
       String TypeExpression = n.f2.accept(this, argu);
@@ -441,12 +444,28 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(ArrayAssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      n.f0.accept(this, argu);
+      String Identifier = n.f0.accept(this, argu);
+      if ( ClassExtend.containsKey(Identifier) ){
+        throw new NoClassAccepted("ArrayAssignmentStatement",Identifier,argu.get(0),argu.get(1));
+      }
+      String Type = checkScope(Identifier,argu);
+      if ( Type==null ){
+        throw new DifferentScope(Identifier,argu.get(0),argu.get(1));
+      }
+      if ( Type!="ArrayType" ){
+        throw new NotAnArray("ArrayAssignmentStatement",Identifier,Type,argu.get(0),argu.get(1));
+      }
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
+      String index = n.f2.accept(this, argu);
+      if ( index!="IntegerType" ){
+        throw new NotAnInt(index,argu.get(0),argu.get(1));
+      }
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
-      n.f5.accept(this, argu);
+      String TypeExpression = n.f5.accept(this, argu);
+      if ( TypeExpression!="IntegerType" ){
+        throw new InvalidArrayAssign(Identifier,TypeExpression,argu.get(0),argu.get(1));
+      }
       n.f6.accept(this, argu);
       return _ret;
    }
@@ -609,6 +628,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         throw new UnexpectedClassName(ArrayName,"ArrayLookup",argu.get(0),argu.get(1));
       }
       String Type = checkScope(ArrayName,argu);
+      if ( Type==null ){
+        throw new DifferentScope(ArrayName,argu.get(0),argu.get(1));
+      }
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayLookup",ArrayName,Type,argu.get(0),argu.get(1));
       }
@@ -616,6 +638,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String index = n.f2.accept(this, argu);
       if ( index!="IntegerType" ){  //is identifier
         Type = checkScope(index,argu);
+        if ( Type==null ){
+          throw new DifferentScope(index,argu.get(0),argu.get(1));
+        }
         if ( Type!="IntegerType" ){
           throw new InvalidArrayIndex(ArrayName,index,Type,argu.get(0),argu.get(1));
         }
@@ -636,6 +661,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         throw new UnexpectedClassName(ArrayName,"ArrayLookup",argu.get(0),argu.get(1));
       }
       String Type = checkScope(ArrayName,argu);
+      if ( Type==null ){
+        throw new DifferentScope(ArrayName,argu.get(0),argu.get(1));
+      }
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayLength",ArrayName,Type,argu.get(0),argu.get(1));
       }
@@ -662,6 +690,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         }
         else{
           Type = checkScope(ClassName,argu);
+          if ( Type==null ){
+            throw new DifferentScope(ClassName,argu.get(0),argu.get(1));
+          }
         }
       }
       else{
