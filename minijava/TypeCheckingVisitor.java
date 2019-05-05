@@ -699,6 +699,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         ClassName = argu.get(1);
       }
       String Type = IdentifierAndCheck(ClassName,argu);
+      // System.out.println(ClassName);
       if ( !ClassExtend.containsKey(Type) ){
         throw new UnknownObjectName(Type,argu.get(0),argu.get(1));
       }
@@ -852,14 +853,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( !ClassExtend.containsKey(Identifier) ){
         throw new UnknownNewClass(Identifier);
       }
-      String Type = null;
+      //  argu.size()==2
+      String Type = Identifier; //just the type after new
       if ( argu.size()==3 ){  //return the type of Identifier if it is called from AssignmentStatement
         Type = IdentifierAndCheck(argu.get(2),argu);
-      }
-      else if ( argu.size()==2 ){ //just the type after new
-        Type = Identifier;
-      } //for method checking in MessageSend
-      if ( argu.size()==3 ){
         ArrayList<String> tmp = new ArrayList<String>();  //to check if it is initialized in MessageSend
         tmp.add(argu.get(2));
         tmp.add(argu.get(0));
@@ -868,6 +865,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         if ( !isPredecessor(Type,Identifier,argu.get(0),argu.get(1)) ){
           throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
         }
+        argu.remove(2); //for occasion new ClassName()
       }
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);

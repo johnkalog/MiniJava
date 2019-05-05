@@ -17,6 +17,10 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     FunctionTypes = new HashMap<ArrayList <String>, ArrayList<String>>();
   }
 
+  public void printOffsets(){
+
+  }
+
   public void CheckClassTypes() throws Exception {  //checks if a VarDeclaration has existent class type
     for ( ArrayList <String> key : ClassFields.keySet() ){
       if ( ClassFields.get(key)!="IntegerType" && ClassFields.get(key)!="BooleanType" && ClassFields.get(key)!="ArrayType"){
