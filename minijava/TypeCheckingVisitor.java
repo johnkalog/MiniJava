@@ -421,10 +421,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( ClassExtend.containsKey(Identifier) ){
         throw new NoClassAccepted("AssignmentStatement",Identifier,argu.get(0),argu.get(1));
       }
-      String Type = checkScope(Identifier,argu);
-      if ( Type==null ){
-        throw new DifferentScope(Identifier,argu.get(0),argu.get(1));
-      }
+      String Type = IdentifierAndCheck(Identifier,argu);
       argu.add(Type); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
       String TypeIdentifier = n.f2.accept(this, argu);
@@ -451,31 +448,20 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( ClassExtend.containsKey(Identifier) ){
         throw new NoClassAccepted("ArrayAssignmentStatement",Identifier,argu.get(0),argu.get(1));
       }
-      String Type = checkScope(Identifier,argu);
-      if ( Type==null ){
-        throw new DifferentScope(Identifier,argu.get(0),argu.get(1));
-      }
+      String Type = IdentifierAndCheck(Identifier,argu);
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayAssignmentStatement",Identifier,Type,argu.get(0),argu.get(1));
       }
       n.f1.accept(this, argu);
       String index = n.f2.accept(this, argu);
-      if ( index!="IntegerType" ){
-        throw new NotAnInt(index,argu.get(0),argu.get(1));
+      String Typeindex = IdentifierAndCheck(index,argu);
+      if ( Typeindex!="IntegerType" ){
+        throw new NotAnInt(Typeindex,argu.get(0),argu.get(1));
       }
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
       String TypeIdentifier = n.f5.accept(this, argu);
-      String TypeExpression = null;
-      if ( isIdentifier(TypeIdentifier) ){
-        TypeExpression = checkScope(TypeIdentifier,argu);
-        if ( TypeExpression==null ){
-          throw new DifferentScope(TypeIdentifier,argu.get(0),argu.get(1));
-        }
-      }
-      else{
-        TypeExpression = TypeIdentifier;
-      }
+      String TypeExpression = IdentifierAndCheck(TypeIdentifier,argu);
       if ( TypeExpression!="IntegerType" ){
         throw new InvalidArrayAssign(Identifier,TypeExpression,argu.get(0),argu.get(1));
       }
@@ -686,10 +672,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       String ClassName = n.f0.accept(this, argu);
       if ( ClassName=="this" ){ //check in FunctionFields
-        Type = argu.get(1);
+        ClassName = argu.get(1);
       }
       String Type = IdentifierAndCheck(ClassName,argu);
-      if ( Type=="IntegerType" || Type=="BooleanType" || Type=="ArrayType" ){
+      if ( !ClassExtend.containsKey(Type) ){
         throw new UnknownObjectName(Type,argu.get(0),argu.get(1));
       }
       n.f1.accept(this, argu);
@@ -704,9 +690,13 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       AllArgumentsCheck.remove(0);  //remove return type
       n.f3.accept(this, argu);
       ArrayList<String> AllArgumentsCall = new ArrayList<String>();
+      AllArgumentsCall.add(argu.get(0));  //to use IdentifierAndCheck
+      AllArgumentsCall.add(argu.get(1));
       if ( n.f4.present() ){
         n.f4.accept(this, AllArgumentsCall);
       }
+      AllArgumentsCall.remove(0);
+      AllArgumentsCall.remove(0);
       if ( !AllArgumentsCheck.equals(AllArgumentsCall) ){
         throw new DifferentPrototype(MethodName,argu.get(0),argu.get(1));
       }
@@ -720,7 +710,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(ExpressionList n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      String Type = n.f0.accept(this, argu);
+      String Identifier = n.f0.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
       argu.add(Type);
       n.f1.accept(this, argu);
       return _ret;
@@ -740,7 +731,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ExpressionTerm n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       n.f0.accept(this, argu);
-      String Type = n.f1.accept(this, argu);
+      String Identifier = n.f1.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
       argu.add(Type);
       return _ret;
    }
@@ -814,7 +806,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
-      String Type = n.f3.accept(this, argu);
+      String Identifier = n.f3.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
       if ( Type!="IntegerType" ){
         throw new InvalidAllocationIndex(argu.get(0),argu.get(1));
       }
