@@ -111,7 +111,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     return null;
   }
 
-  public boolean isPredecessor(String Type,String Identifier,String MethodName,String ClassName){ //if Type is is predecessor of Identifier
+  public boolean isPredecessor(String Type,String Identifier){ //if Type is predecessor of Identifier
     String ClassParent = ClassExtend.get(Identifier);
     if ( Type==Identifier ){
       return true;
@@ -862,7 +862,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         tmp.add(argu.get(0));
         tmp.add(argu.get(1));
         MethodInitializedObjects.add(tmp);
-        if ( !isPredecessor(Type,Identifier,argu.get(0),argu.get(1)) ){
+        if ( !isPredecessor(Type,Identifier) ){ //at Objects AssignmentStatement
           throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
         }
         argu.remove(2); //for occasion new ClassName()
