@@ -301,7 +301,13 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         n.f8.accept(this, Scope);
       }
       n.f9.accept(this, argu);
-      n.f10.accept(this, Scope);  //also needs here for type errors
+      String Identifier = n.f10.accept(this, Scope);  //also needs here for type errors
+      String Type = IdentifierAndCheck(Identifier,Scope);
+      ArrayList<String> Prototype = FunctionTypes.get(Scope);
+      String ReturnType = Prototype.get(0);
+      if ( Type!=ReturnType ){
+        throw new InvalidReturnType(Type,ReturnType,MethodName,ClassName);
+      }
       n.f11.accept(this, argu);
       n.f12.accept(this, argu);
       return _ret;
@@ -418,9 +424,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(AssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
-      if ( ClassExtend.containsKey(Identifier) ){
-        throw new NoClassAccepted("AssignmentStatement",Identifier,argu.get(0),argu.get(1));
-      }
       String Type = IdentifierAndCheck(Identifier,argu);
       argu.add(Type); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
@@ -445,9 +448,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ArrayAssignmentStatement n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
-      if ( ClassExtend.containsKey(Identifier) ){
-        throw new NoClassAccepted("ArrayAssignmentStatement",Identifier,argu.get(0),argu.get(1));
-      }
       String Type = IdentifierAndCheck(Identifier,argu);
       if ( Type!="ArrayType" ){
         throw new NotAnArray("ArrayAssignmentStatement",Identifier,Type,argu.get(0),argu.get(1));
@@ -482,7 +482,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
-      String Type = n.f2.accept(this, argu);
+      String Identifier = n.f2.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
       if ( Type!="BooleanType" ){
         throw new OnlyBoolean("IfStatement",Type,argu.get(0),argu.get(1));
       }
@@ -504,7 +505,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
-      String Type = n.f2.accept(this, argu);
+      String Identifier = n.f2.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
       if ( Type!="BooleanType" ){
         throw new OnlyBoolean("WhileStatement",Type,argu.get(0),argu.get(1));
       }
@@ -524,7 +526,11 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
-      n.f2.accept(this, argu);
+      String Identifier = n.f2.accept(this, argu);
+      String Type = IdentifierAndCheck(Identifier,argu);
+      if ( Type!="IntegerType" && Type!="BooleanType" ){
+        throw new InvalidPrint(Type,argu.get(0),argu.get(1));
+      }
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
       return _ret;
