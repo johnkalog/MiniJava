@@ -10,6 +10,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
   public static Map<ArrayList <String>, String> FunctionFields;
   public static Map<ArrayList <String>, ArrayList<String>> FunctionTypes;
   private ArrayList <ArrayList <String>> MethodInitializedObjects; //[[ObjectName MethodName ClassName] ... ]
+  private Map<String, ArrayList< ArrayList<String>>> ClassRowFields;  //  ClassNames as appeared in input file each with it's info example element A->[[i 0] [j 4]]
+  private Map<String, ArrayList< ArrayList<String>>> ClassRowFunctions;  //  A->[[foo 0]]
 
   public TypeCheckingVisitor(){   //same reference as SymbolTableVisitor class fields
     this.ClassExtend = SymbolTableVisitor.ClassExtend;
@@ -17,6 +19,12 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     this.FunctionFields = SymbolTableVisitor.FunctionFields;
     this.FunctionTypes = SymbolTableVisitor.FunctionTypes;
     MethodInitializedObjects = new ArrayList<ArrayList<String>>();
+    ClassRowFields = new LinkedHashMap<String, ArrayList< ArrayList<String>>>();
+    ClassRowFunctions = new LinkedHashMap<String, ArrayList< ArrayList<String>>>();
+  }
+
+  public void printOffsets(){
+
   }
 
   public String checkScope(String Identifier,ArrayList <String> argu) throws Exception{ //returns Type of the Identifier in the same scope of argu else null
@@ -150,6 +158,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
+      System.out.println(ClassRowFields);
       n.f2.accept(this, argu);
       return _ret;
    }
@@ -223,10 +232,12 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       String ClassName = n.f1.accept(this, argu); //argument to MethodDeclaration
+      ArrayList< ArrayList<String>> ForThisClassFields = new ArrayList< ArrayList<String>>(); //reference so can change it later
+      ClassRowFields.put(ClassName,ForThisClassFields); //filled at VarDeclaration and Method
       ArrayList<String> Scope = new ArrayList<String>();
       Scope.add(ClassName);
       n.f2.accept(this, argu);
-      n.f3.accept(this, argu);
+      n.f3.accept(this, Scope);
       n.f4.accept(this, Scope); //for scope knowledge
       n.f5.accept(this, argu);
       return _ret;
@@ -246,12 +257,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       String ClassName = n.f1.accept(this, argu);
+      ArrayList< ArrayList<String>> ForThisClassFields = new ArrayList< ArrayList<String>>();
+      ClassRowFields.put(ClassName,ForThisClassFields);
       ArrayList<String> Scope = new ArrayList<String>();
       Scope.add(ClassName);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
       n.f4.accept(this, argu);
-      n.f5.accept(this, argu);
+      n.f5.accept(this, Scope);
       n.f6.accept(this, Scope);
       n.f7.accept(this, argu);
       return _ret;
@@ -264,6 +277,66 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(VarDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
+      if ( argu!=null ){  //it comes from ClassDeclaration not from VarDeclaration in MethodDeclaration
+        String Type = n.f0.accept(this, argu);
+        String Identifier = n.f1.accept(this, argu);
+        ArrayList< ArrayList<String>> ForThisClass = ClassRowFields.get(argu.get(0));
+        ArrayList<String> Pair = new ArrayList<String>();
+        String ClassParent = ClassExtend.get(argu.get(0));
+        if ( ForThisClass.isEmpty() ){ //no var declarations for this class before
+          if ( ClassParent!=null ){
+            ArrayList< ArrayList<String>> InfoParent = ClassRowFields.get(ClassParent);
+            if ( !InfoParent.isEmpty() ){//there were some declarations before
+              Pair.add(Identifier);
+              ArrayList<String> lastArrayList = InfoParent.get(InfoParent.size()-1);
+              String lastOffset = lastArrayList.get(1);
+              String lastIdentifier = lastArrayList.get(0);
+              ArrayList<String> toSearch = new ArrayList<String>();
+              toSearch.add(lastIdentifier);
+              toSearch.add(argu.get(0));
+              String lastType = ClassFields.get(toSearch);
+              int lastTypeNum = 8;
+              if ( lastType=="IntegerType" ){
+                lastTypeNum = 4;
+              }
+              else if ( lastType=="BooleanType" ){
+                lastTypeNum = 1;
+              }
+              Pair.add(String.valueOf(Integer.parseInt(lastOffset)+lastTypeNum));
+              ForThisClass.add(Pair);
+            }
+            else{
+              Pair.add(Identifier);
+              Pair.add(String.valueOf(0));
+              ForThisClass.add(Pair);
+            }
+          }
+          else{
+            Pair.add(Identifier);
+            Pair.add(String.valueOf(0));
+            ForThisClass.add(Pair);
+          }
+        }
+        else{
+          Pair.add(Identifier);
+          ArrayList<String> lastArrayList = ForThisClass.get(ForThisClass.size()-1);
+          String lastOffset = lastArrayList.get(1);
+          String lastIdentifier = lastArrayList.get(0);
+          ArrayList<String> toSearch = new ArrayList<String>();
+          toSearch.add(lastIdentifier);
+          toSearch.add(argu.get(0));
+          String lastType = ClassFields.get(toSearch);
+          int lastTypeNum = 8;
+          if ( lastType=="IntegerType" ){
+            lastTypeNum = 4;
+          }
+          else if ( lastType=="BooleanType" ){
+            lastTypeNum = 1;
+          }
+          Pair.add(String.valueOf(Integer.parseInt(lastOffset)+lastTypeNum));
+          ForThisClass.add(Pair);
+        }
+      }
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
@@ -298,6 +371,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
+      argu = null;  //passed to VarDeclaration
       n.f7.accept(this, argu);
       if ( n.f8.present() ){
         n.f8.accept(this, Scope);
@@ -699,7 +773,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         ClassName = argu.get(1);
       }
       String Type = IdentifierAndCheck(ClassName,argu);
-      // System.out.println(ClassName);
       if ( !ClassExtend.containsKey(Type) ){
         throw new UnknownObjectName(Type,argu.get(0),argu.get(1));
       }

@@ -23,7 +23,7 @@ class Main {
           // SymbolTable.printSymbolTable();
           TypeCheckingVisitor TypeChecking = new TypeCheckingVisitor();
           root.accept(TypeChecking, null);
-          SymbolTable.printOffsets();
+          TypeChecking.printOffsets();
     	}
     	catch(ParseException ex){
     	    System.out.println(ex.getMessage());
