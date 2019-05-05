@@ -9,12 +9,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
   public static Map<ArrayList <String>, String> ClassFields;
   public static Map<ArrayList <String>, String> FunctionFields;
   public static Map<ArrayList <String>, ArrayList<String>> FunctionTypes;
+  private ArrayList <ArrayList <String>> MethodInitializedObjects; //[[ObjectName MethodName ClassName] ... ]
 
   public TypeCheckingVisitor(){   //same reference as SymbolTableVisitor class fields
     this.ClassExtend = SymbolTableVisitor.ClassExtend;
     this.ClassFields = SymbolTableVisitor.ClassFields;
     this.FunctionFields = SymbolTableVisitor.FunctionFields;
     this.FunctionTypes = SymbolTableVisitor.FunctionTypes;
+    MethodInitializedObjects = new ArrayList<ArrayList<String>>();
   }
 
   public String checkScope(String Identifier,ArrayList <String> argu) throws Exception{ //returns Type of the Identifier in the same scope of argu else null
@@ -303,11 +305,16 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f9.accept(this, argu);
       String Identifier = n.f10.accept(this, Scope);  //also needs here for type errors
       String Type = IdentifierAndCheck(Identifier,Scope);
-      ArrayList<String> Prototype = FunctionTypes.get(Scope);
+      ArrayList<String> ForPrototype = new ArrayList<String>(Scope);
+      if ( Scope.size()==3 ){  //delete last argument
+        ForPrototype.remove(2);
+      }
+      ArrayList<String> Prototype = FunctionTypes.get(ForPrototype);
       String ReturnType = Prototype.get(0);
       if ( Type!=ReturnType ){
         throw new InvalidReturnType(Type,ReturnType,MethodName,ClassName);
       }
+      MethodInitializedObjects.clear(); //to able the next method check objects
       n.f11.accept(this, argu);
       n.f12.accept(this, argu);
       return _ret;
@@ -425,7 +432,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
       String Type = IdentifierAndCheck(Identifier,argu);
-      argu.add(Type); //for knownig the new ClassName() what to do
+      argu.add(Identifier); //for knownig the new ClassName() what to do
       n.f1.accept(this, argu);
       String TypeIdentifier = n.f2.accept(this, argu);
       String TypeExpression = IdentifierAndCheck(TypeIdentifier,argu);
@@ -677,6 +684,17 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MessageSend n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String ClassName = n.f0.accept(this, argu);
+      if ( ClassName!="this" ){
+        if ( isIdentifier(ClassName) ){
+          ArrayList<String> tmp = new ArrayList<String>();
+          tmp.add(ClassName);
+          tmp.add(argu.get(0));
+          tmp.add(argu.get(1));
+          if ( !MethodInitializedObjects.contains(tmp) ){
+            throw new UninitializedObject(ClassName,argu.get(0),argu.get(1));
+          }
+        }
+      }
       if ( ClassName=="this" ){ //check in FunctionFields
         ClassName = argu.get(1);
       }
@@ -836,12 +854,17 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       }
       String Type = null;
       if ( argu.size()==3 ){  //return the type of Identifier if it is called from AssignmentStatement
-        Type = argu.get(2);
+        Type = IdentifierAndCheck(argu.get(2),argu);
       }
       else if ( argu.size()==2 ){ //just the type after new
         Type = Identifier;
       } //for method checking in MessageSend
       if ( argu.size()==3 ){
+        ArrayList<String> tmp = new ArrayList<String>();  //to check if it is initialized in MessageSend
+        tmp.add(argu.get(2));
+        tmp.add(argu.get(0));
+        tmp.add(argu.get(1));
+        MethodInitializedObjects.add(tmp);
         if ( !isPredecessor(Type,Identifier,argu.get(0),argu.get(1)) ){
           throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
         }
