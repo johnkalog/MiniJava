@@ -36,7 +36,6 @@ class Main {
         System.out.println("Semantic error"); //problem that other exceptions will print the same
         System.out.println(e.getMessage()); //overrided at files in folder semantic
         // System.out.println( e.getClass().getCanonicalName());
-        e.printStackTrace(new java.io.PrintStream(System.out));
       }
     	finally{
     	    try{

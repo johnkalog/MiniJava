@@ -427,7 +427,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
             while ( ClassParentWithAMethod!=null ){
               ArrayList< ArrayList<String>> InfoP = ClassRowFunctions.get(ClassParentWithAMethod);
               if ( InfoP!=null ){
-                if ( !InfoP.isEmpty() ){
+                if ( !InfoP.isEmpty() ){  //found a method
                   Pair.add(MethodName);
                   ArrayList<String> MethodParent = InfoP.get(InfoP.size()-1);
                   String lastOffset = MethodParent.get(1);
