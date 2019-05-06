@@ -179,6 +179,22 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     }
     return true;
   }
+
+  public boolean NotExistsAtAllParents(String MethodName,String FirstClass){  //true if method doesn't exist to no one parent
+    String ClassParent = FirstClass;
+    ArrayList<String> toSearch = new ArrayList<String>();
+    while ( ClassParent!=null ){
+      toSearch.add(MethodName);
+      toSearch.add(ClassParent);
+      if ( FunctionTypes.containsKey(toSearch) ){
+        return false;
+      }
+      toSearch.clear();
+      ClassParent = ClassExtend.get(ClassParent);
+    }
+    return true;
+  }
+
    /**
     * f0 -> MainClass()
     * f1 -> ( TypeDeclaration() )*
@@ -406,33 +422,27 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String ClassParent = ClassExtend.get(ClassName);
       if ( ForThisClass.isEmpty() ){ //no var declarations for this class before
         if ( ClassParent!=null ){
-          ArrayList< ArrayList<String>> InfoParent = ClassRowFunctions.get(ClassParent);
-          if ( !InfoParent.isEmpty() ){//there were some declarations before
-            ArrayList<String> toSearch = new ArrayList<String>();
-            toSearch.add(MethodName);
-            toSearch.add(ClassParent);
-            if ( FunctionTypes.containsKey(toSearch) ){ //exist also at parent's class
-              Pair.add(MethodName);
-              String lastOffset = null;
-              for ( int i=0; i<InfoParent.size(); i++ ){
-                ArrayList<String> MethodParent = InfoParent.get(i);
-                if ( MethodName.equals(MethodParent.get(0)) ){
-                  lastOffset = MethodParent.get(1);
+          if ( NotExistsAtAllParents(MethodName,ClassParent) ){ //not exist at the parent's class
+            String ClassParentWithAMethod = ClassParent;
+            while ( ClassParentWithAMethod!=null ){
+              ArrayList< ArrayList<String>> InfoP = ClassRowFunctions.get(ClassParentWithAMethod);
+              if ( InfoP!=null ){
+                if ( !InfoP.isEmpty() ){
+                  Pair.add(MethodName);
+                  ArrayList<String> MethodParent = InfoP.get(InfoP.size()-1);
+                  String lastOffset = MethodParent.get(1);
+                  Pair.add(String.valueOf(Integer.parseInt(lastOffset)+8));
+                  ForThisClass.add(Pair);
+                  break;
                 }
               }
-              Pair.add(String.valueOf(Integer.parseInt(lastOffset)));
-              ForThisClass.add(Pair);
+              ClassParentWithAMethod = ClassExtend.get(ClassParentWithAMethod);
             }
-            else{
-              Pair.add(MethodName);
+            if ( ClassParentWithAMethod==null ){
+              Pair.add(MethodName); //no one of parents has a method
               Pair.add(String.valueOf(0));
               ForThisClass.add(Pair);
             }
-          }
-          else{
-            Pair.add(MethodName);
-            Pair.add(String.valueOf(0));
-            ForThisClass.add(Pair);
           }
         }
         else{
@@ -603,6 +613,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         return _ret;
       }
       String TypeExpression = IdentifierAndCheck(TypeIdentifier,argu);
+      if ( ClassExtend.containsKey(Type) && ClassExtend.containsKey(TypeExpression) ){  //objects
+        if ( !isPredecessor(Type,TypeExpression) ){
+          throw new UnsupportedInheritance(Type,TypeExpression,argu.get(0),argu.get(1));
+        }
+        else{
+          return _ret;
+        }
+      }
       if ( TypeExpression!=Type ){
         throw new InvalidAssign(Type,TypeExpression,argu.get(0),argu.get(1));
       }
@@ -1020,23 +1038,9 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( !ClassExtend.containsKey(Identifier) ){
         throw new UnknownNewClass(Identifier);
       }
-      //  argu.size()==2
-      String Type = Identifier; //just the type after new
-      if ( argu.size()==3 ){  //return the type of Identifier if it is called from AssignmentStatement
-        Type = IdentifierAndCheck(argu.get(2),argu);
-        if ( !isPredecessor(Type,Identifier) ){ //at Objects AssignmentStatement
-          throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
-        }
-        String MethodName = argu.get(0);
-        String ClassName = argu.get(1);
-        argu.clear();
-        argu.add(MethodName);
-        argu.add(ClassName);
-        // argu.remove(2); //for occasion new ClassName()
-      }
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      return Type;
+      return Identifier;
    }
 
    /**

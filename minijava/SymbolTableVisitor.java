@@ -124,6 +124,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      Map<String, String> _ret=null;
      n.f0.accept(this, argu);
      String ClassName = n.f1.accept(this, argu).keySet().toArray()[0].toString();
+     ClassExtend.put(ClassName,null);
      n.f2.accept(this, argu);
      n.f3.accept(this, argu);
      n.f4.accept(this, argu);
