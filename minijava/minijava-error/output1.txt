@@ -1,0 +1,45 @@
+----------------------minijava-error/BadAssign.java-------------------------
+Semantic error
+IntegerType can't be assigned to A in method: main in  class: BadAssign
+----------------------minijava-error/BadAssign2.java-------------------------
+Semantic error
+A can't be assigned to B in method: main in  class: BadAssign
+----------------------minijava-error/Classes-error.java-------------------------
+Semantic error
+Method: get at class: Derived has different prototype from it's parent class: Base
+----------------------minijava-error/DoubleDeclaration1.java-------------------------
+Semantic error
+Identifier: x defined in parameter list and in variable declaration in method: foo in class: A
+----------------------minijava-error/DoubleDeclaration4.java-------------------------
+Semantic error
+Redefinition of class: A
+----------------------minijava-error/DoubleDeclaration6.java-------------------------
+Semantic error
+Method: foo can't be overloaded in class: A
+----------------------minijava-error/NoMatchingMethod.java-------------------------
+Semantic error
+Method: foo hasn't the same prototype as used in method call in method: main in class: NoMatchingMethod
+----------------------minijava-error/NoMethod.java-------------------------
+Semantic error
+Method: foo can't be supported(declared at class or parent's class) from class: A at method call in method: main in class: NoMethod
+----------------------minijava-error/Overload1.java-------------------------
+Semantic error
+Method: foo can't be overloaded in class: A
+----------------------minijava-error/test18.java-------------------------
+Semantic error
+Identifier: op is: IntegerType instead of: ArrayType in ArrayLookup in  method: start in class: Test
+----------------------minijava-error/test21.java-------------------------
+Semantic error
+Array index is: BooleanType instead of IntegerType at ArrayAssignmentStatement in method: start in class: Test
+----------------------minijava-error/test35.java-------------------------
+Semantic error
+Test used in PrintStatement instead of IntegerType or BooleanType in method: startin class: Test
+----------------------minijava-error/test52.java-------------------------
+Semantic error
+IntegerType can't be assigned to BooleanType in method: start in  class: Test
+----------------------minijava-error/test68.java-------------------------
+Semantic error
+Object type Identifier: test hasn't been initialized for method call in method: start in class: Test
+----------------------minijava-error/UseArgs.java-------------------------
+Semantic error
+Identifier: args not in same scope for method: main in class: UseArgs. Means not in method's VarDeclaration or method's parameter list or classe's VarDeclaration or parent classe's VarDeclaration

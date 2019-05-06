@@ -14,7 +14,7 @@ class Main {
     	FileInputStream fis = null;
       System.out.println("----------------------"+args[i]+"-------------------------");
     	try{
-    	    fis = new FileInputStream(args[0]);
+    	    fis = new FileInputStream(args[i]);
     	    MiniJavaParser parser = new MiniJavaParser(fis);
     	    System.err.println("Program parsed successfully.");
     	    SymbolTableVisitor SymbolTable = new SymbolTableVisitor();
@@ -34,6 +34,7 @@ class Main {
       catch(Exception e){ //because that throw the SymbolTableVisitor class
         System.out.println("Semantic error"); //problem that other exceptions will print the same
         System.out.println(e.getMessage()); //overrided at files in folder semantic
+        System.out.println( e.getClass().getCanonicalName()); 
       }
     	finally{
     	    try{
