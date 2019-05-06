@@ -35,13 +35,14 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
         String Offset = ForThisClassFields.get(i).get(1);
         System.out.println(ClassName+"."+Identifier+" : "+Offset);
       }
-      System.out.println("\n--Methods---");
+      System.out.println("--Methods---");
       ArrayList< ArrayList<String>> ForThisClassFunctions = ClassRowFunctions.get(ClassName);
       for ( int i=0; i<ForThisClassFunctions.size(); i++ ){
         String Identifier = ForThisClassFunctions.get(i).get(0);
         String Offset = ForThisClassFunctions.get(i).get(1);
         System.out.println(ClassName+"."+Identifier+" : "+Offset);
       }
+      System.out.println();
     }
   }
 
@@ -318,7 +319,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
               String lastIdentifier = lastArrayList.get(0);
               ArrayList<String> toSearch = new ArrayList<String>();
               toSearch.add(lastIdentifier);
-              toSearch.add(argu.get(0));
+              toSearch.add(ClassParent);
               String lastType = ClassFields.get(toSearch);
               int lastTypeNum = 8;
               if ( lastType.equals("IntegerType") ){
