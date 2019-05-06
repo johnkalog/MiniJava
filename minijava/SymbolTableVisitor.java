@@ -129,7 +129,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      n.f12.accept(this, argu);
      n.f13.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>(); //Identifier key with value it's type
-     IdentifierType.put("123","main"); //Identifier can't start with number, to know the MethodName in VarDeclaration
+     // IdentifierType.put("123","main"); //Identifier can't start with number, to know the MethodName in VarDeclaration
      if ( n.f14.present() ){  //if there is VarDeclaration
        n.f14.accept(this, IdentifierType);  //passed as argument to f14 to put values
        IdentifierType.remove("123");
@@ -261,10 +261,10 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) throws Exception {
     String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
     String Identifier =n.f1.accept(this, argu).keySet().toArray()[0].toString();
-    String MethodName = argu.get("123");
-    if ( MethodName.equals("main") && Identifier.equals(IdentifierMain) ){
-      throw new InvalidIdentifierMain(IdentifierMain);
-    }
+    // String MethodName = argu.get("123");
+    // if ( MethodName.equals("main") && Identifier.equals(IdentifierMain) ){
+    //   throw new InvalidIdentifierMain(IdentifierMain);
+    // }
     if ( argu.containsKey(Identifier) ){
       throw new RedefinitionIdentifier(Identifier,argu.get(Identifier));
     }

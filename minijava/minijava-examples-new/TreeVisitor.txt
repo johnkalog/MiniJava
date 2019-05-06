@@ -1,7 +1,7 @@
------------Class BT-----------
+-----------Class TV-----------
 --Variables---
 ---Methods---
-BT.Start : 0
+TV.Start : 0
 
 -----------Class Tree-----------
 --Variables---
@@ -32,3 +32,16 @@ Tree.RemoveLeft : 128
 Tree.Search : 136
 Tree.Print : 144
 Tree.RecPrint : 152
+Tree.accept : 160
+
+-----------Class Visitor-----------
+--Variables---
+Visitor.l : 0
+Visitor.r : 8
+---Methods---
+Visitor.visit : 0
+
+-----------Class MyVisitor-----------
+--Variables---
+---Methods---
+
