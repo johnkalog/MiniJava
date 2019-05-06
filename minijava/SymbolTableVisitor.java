@@ -9,6 +9,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   public static Map<ArrayList <String>, String> ClassFields;  //[Identifier ClassName] Type
   public static Map<ArrayList <String>, String> FunctionFields; //[Identifier MethodName ClassName] Type
   public static Map<ArrayList <String>, ArrayList<String>> FunctionTypes; //[MethodName ClassName] [ReturnType ArgumentIdentifier1 ArgumentType1 ...ArgumentIdentifiern ArgumentTypen]
+  private String IdentifierMain;
 
   public SymbolTableVisitor(){
     ClassExtend = new HashMap<String, String>();
@@ -124,11 +125,14 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      n.f9.accept(this, argu);
      n.f10.accept(this, argu);
      String Type = n.f11.accept(this, argu).keySet().toArray()[0].toString();
+     IdentifierMain = Type;
      n.f12.accept(this, argu);
      n.f13.accept(this, argu);
      Map <String, String> IdentifierType = new HashMap<String, String>(); //Identifier key with value it's type
+     IdentifierType.put("123","main"); //Identifier can't start with number, to know the MethodName in VarDeclaration
      if ( n.f14.present() ){  //if there is VarDeclaration
        n.f14.accept(this, IdentifierType);  //passed as argument to f14 to put values
+       IdentifierType.remove("123");
        IdentifierType.forEach((key, value) -> { //lamda function to add Map contents
          ArrayList<String> IdentifierFunctionClass = new ArrayList<String>();
          IdentifierFunctionClass.add(key);
@@ -145,8 +149,6 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
      FunctionClass.add(ClassName);
      ArrayList<String> AllArguments = new ArrayList<String>();
      AllArguments.add("IntegerType"); //it is void but insert this to avoid type checking in function CheckClassTypes
-     AllArguments.add(Type);  //Identifier in args
-     AllArguments.add("IntegerType"); //although it is String[]
      FunctionTypes.put(FunctionClass,AllArguments);
      n.f15.accept(this, argu);
      n.f16.accept(this, argu);
@@ -259,6 +261,10 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
   public Map<String, String> visit(VarDeclaration n, Map<String, String> argu) throws Exception {
     String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
     String Identifier =n.f1.accept(this, argu).keySet().toArray()[0].toString();
+    String MethodName = argu.get("123");
+    if ( MethodName=="main" && Identifier==IdentifierMain ){
+      throw new InvalidIdentifierMain(IdentifierMain);
+    }
     if ( argu.containsKey(Identifier) ){
       throw new RedefinitionIdentifier(Identifier,argu.get(Identifier));
     }
