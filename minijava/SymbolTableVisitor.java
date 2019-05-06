@@ -63,11 +63,17 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     }
   }
 
+  public boolean isIdentifier(String Identifier){
+    if ( Identifier.equals("IntegerType") || Identifier.equals("BooleanType") || Identifier.equals("ArrayType") || ClassExtend.containsKey(Identifier) ){
+      return false;
+    }
+    return true;
+  }
+
   public void KeepTypes(ArrayList <String> myList){ //keep only types
     for ( int i=1; i<myList.size(); i++ ){  //value 0 may be a class
-      String value = myList.get(i);
-      if ( value!="IntegerType" && value!="BooleanType" && value!="ArrayType" ){
-        myList.remove(value);
+      if ( isIdentifier(myList.get(i)) ){
+        myList.remove(i);
       }
     }
   }

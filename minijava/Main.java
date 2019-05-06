@@ -33,9 +33,8 @@ class Main {
     	}
       catch(Exception e){ //because that throw the SymbolTableVisitor class
         System.out.println("Semantic error"); //problem that other exceptions will print the same
-        // System.out.println(e.getMessage()); //overrided at files in folder semantic
-        System.out.println( e.getClass().getCanonicalName());
-        e.printStackTrace(new java.io.PrintStream(System.out));
+        System.out.println(e.getMessage()); //overrided at files in folder semantic
+        // System.out.println( e.getClass().getCanonicalName());
       }
     	finally{
     	    try{

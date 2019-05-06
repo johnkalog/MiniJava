@@ -9,7 +9,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
   public static Map<ArrayList <String>, String> ClassFields;
   public static Map<ArrayList <String>, String> FunctionFields;
   public static Map<ArrayList <String>, ArrayList<String>> FunctionTypes;
-  private ArrayList <ArrayList <String>> MethodInitializedObjects; //[[ObjectName MethodName ClassName] ... ]
   private Map<String, ArrayList< ArrayList<String>>> ClassRowFields;  //  ClassNames as appeared in input file each with it's info example element A->[[i 0] [j 4]]
   private Map<String, ArrayList< ArrayList<String>>> ClassRowFunctions;  //  A->[[foo 0]]
   private int InClassNow;
@@ -19,7 +18,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     this.ClassFields = SymbolTableVisitor.ClassFields;
     this.FunctionFields = SymbolTableVisitor.FunctionFields;
     this.FunctionTypes = SymbolTableVisitor.FunctionTypes;
-    MethodInitializedObjects = new ArrayList<ArrayList<String>>();
     ClassRowFields = new LinkedHashMap<String, ArrayList< ArrayList<String>>>();
     ClassRowFunctions = new LinkedHashMap<String, ArrayList< ArrayList<String>>>();
     InClassNow = 0;
@@ -61,7 +59,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     tmp.add(MethodName);
     tmp.add(ClassName);
     ArrayList <String> AllArguments = new ArrayList <String>(FunctionTypes.get(tmp));  //after check at parameter list
-    if ( AllArguments!=null ){
+    if ( !AllArguments.isEmpty() ){
       AllArguments.remove(0);
       keepVariables(AllArguments);
       int index=AllArguments.indexOf(Identifier);
@@ -109,7 +107,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
 
   public void keepVariables(ArrayList<String> myList){  //keeps identifiers, they are at odd indexes
     for ( int i=0; i<myList.size(); i++ ){
-      if ( i%2!=0 ){
+      if ( !isIdentifier(myList.get(i)) ){
         myList.remove(i);
       }
     }
@@ -168,6 +166,19 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     }
   }
 
+  public boolean equalsAndParents(ArrayList <String> listParent,ArrayList <String> listToCheck){ //checks if listParent is Parent list for listToCheck
+    if ( listParent.size()!=listToCheck.size() ){
+      return false;
+    }
+    for ( int i=0; i<listParent.size(); i++ ){
+      String Parent = listParent.get(i);
+      String Child = listToCheck.get(i);
+      if ( !isPredecessor(Parent,Child) ){
+        return false;
+      }
+    }
+    return true;
+  }
    /**
     * f0 -> MainClass()
     * f1 -> ( TypeDeclaration() )*
@@ -460,7 +471,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       if ( Type!=ReturnType ){
         throw new InvalidReturnType(Type,ReturnType,MethodName,ClassName);
       }
-      MethodInitializedObjects.clear(); //to able the next method check objects
       n.f11.accept(this, argu);
       n.f12.accept(this, argu);
       return _ret;
@@ -485,11 +495,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       String Identifier = n.f1.accept(this, argu);
-      ArrayList<String> tmp = new ArrayList<String>();
-      tmp.add(Identifier);
-      tmp.add(argu.get(0));
-      tmp.add(argu.get(1));
-      MethodInitializedObjects.add(tmp);
       return _ret;
    }
 
@@ -592,14 +597,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f1.accept(this, argu);
       String TypeIdentifier = n.f2.accept(this, argu);
       if ( TypeIdentifier.equals("this") ){
-        if ( Type.equals(ClassName) ){
-          ArrayList<String> tmp = new ArrayList<String>();
-          tmp.add(Identifier);
-          tmp.add(MethodName);
-          tmp.add(ClassName);
-          MethodInitializedObjects.add(tmp);
-          return _ret;
+        if ( !isPredecessor(Type,ClassName) ){
+          throw new UnsupportedInheritance(Type,ClassName,argu.get(0),argu.get(1));
         }
+        return _ret;
       }
       String TypeExpression = IdentifierAndCheck(TypeIdentifier,argu);
       if ( TypeExpression!=Type ){
@@ -850,17 +851,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MessageSend n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String ClassName = n.f0.accept(this, argu);
-      if ( ClassName!="this" ){
-        if ( isIdentifier(ClassName) ){
-          ArrayList<String> tmp = new ArrayList<String>();
-          tmp.add(ClassName);
-          tmp.add(argu.get(0));
-          tmp.add(argu.get(1));
-          if ( !MethodInitializedObjects.contains(tmp) ){
-            throw new UninitializedObject(ClassName,argu.get(0),argu.get(1));
-          }
-        }
-      }
       if ( ClassName.equals("this") ){ //check in FunctionFields
         ClassName = argu.get(1);
       }
@@ -887,7 +877,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       }
       AllArgumentsCall.remove(0);
       AllArgumentsCall.remove(0);
-      if ( !AllArgumentsCheck.equals(AllArgumentsCall) ){
+      if ( !equalsAndParents(AllArgumentsCheck,AllArgumentsCall) ){
         throw new DifferentPrototype(MethodName,argu.get(0),argu.get(1));
       }
       n.f5.accept(this, argu);
@@ -901,7 +891,13 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(ExpressionList n, ArrayList<String> argu) throws Exception {
       String _ret=null;
       String Identifier = n.f0.accept(this, argu);
-      String Type = IdentifierAndCheck(Identifier,argu);
+      String Type = null;
+      if ( Identifier.equals("this") ){
+        Type = argu.get(1);
+      }
+      else{
+        Type = IdentifierAndCheck(Identifier,argu);
+      }
       argu.add(Type);
       n.f1.accept(this, argu);
       return _ret;
@@ -922,7 +918,13 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       String Identifier = n.f1.accept(this, argu);
-      String Type = IdentifierAndCheck(Identifier,argu);
+      String Type = null;
+      if ( Identifier.equals("this") ){
+        Type = argu.get(1);
+      }
+      else{
+        Type = IdentifierAndCheck(Identifier,argu);
+      }
       argu.add(Type);
       return _ret;
    }
@@ -1022,11 +1024,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String Type = Identifier; //just the type after new
       if ( argu.size()==3 ){  //return the type of Identifier if it is called from AssignmentStatement
         Type = IdentifierAndCheck(argu.get(2),argu);
-        ArrayList<String> tmp = new ArrayList<String>();  //to check if it is initialized in MessageSend
-        tmp.add(argu.get(2));
-        tmp.add(argu.get(0));
-        tmp.add(argu.get(1));
-        MethodInitializedObjects.add(tmp);
         if ( !isPredecessor(Type,Identifier) ){ //at Objects AssignmentStatement
           throw new UnsupportedInheritance(Type,Identifier,argu.get(0),argu.get(1));
         }

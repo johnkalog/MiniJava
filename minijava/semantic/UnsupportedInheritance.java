@@ -11,7 +11,7 @@ public class UnsupportedInheritance extends Exception{
   }
 
   public String getMessage() {
-    return "Assignment: "+this.Type+" ... = new "+this.Identifier+"() can't be supported because "+this.Type+
+    return "Assignment: "+this.Type+" ... = "+this.Identifier+" can't be supported because "+this.Type+
             " is not predecessor. Assignment found in method: "+this.MethodName+" in class: "+this.ClassName;
   }
 }
