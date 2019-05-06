@@ -113,7 +113,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
   }
 
   public boolean isIdentifier(String Identifier){
-    if ( Identifier=="IntegerType" || Identifier=="BooleanType" || Identifier=="ArrayType" ||ClassExtend.containsKey(Identifier) ){
+    if ( Identifier.equals("IntegerType") || Identifier.equals("BooleanType") || Identifier.equals("ArrayType") ||ClassExtend.containsKey(Identifier) ){
       return false;
     }
     return true;
@@ -137,11 +137,11 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
 
   public boolean isPredecessor(String Type,String Identifier){ //if Type is predecessor of Identifier
     String ClassParent = ClassExtend.get(Identifier);
-    if ( Type==Identifier ){
+    if ( Type.equals(Identifier) ){
       return true;
     }
     while ( ClassParent!=null ){
-      if ( ClassParent==Type ){
+      if ( ClassParent.equals(Type) ){
         return true;
       }
       ClassParent = ClassExtend.get(ClassParent);
@@ -296,7 +296,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
     */
    public String visit(VarDeclaration n, ArrayList<String> argu) throws Exception {
       String _ret=null;
-      if ( argu!=null ){  //it comes from ClassDeclaration not from VarDeclaration in MethodDeclaration
+      if ( !argu.isEmpty() ){  //it comes from ClassDeclaration not from VarDeclaration in MethodDeclaration
         String Type = n.f0.accept(this, argu);
         String Identifier = n.f1.accept(this, argu);
         ArrayList< ArrayList<String>> ForThisClass = ClassRowFields.get(argu.get(0));
@@ -315,10 +315,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
               toSearch.add(argu.get(0));
               String lastType = ClassFields.get(toSearch);
               int lastTypeNum = 8;
-              if ( lastType=="IntegerType" ){
+              if ( lastType.equals("IntegerType") ){
                 lastTypeNum = 4;
               }
-              else if ( lastType=="BooleanType" ){
+              else if ( lastType.equals("BooleanType") ){
                 lastTypeNum = 1;
               }
               Pair.add(String.valueOf(Integer.parseInt(lastOffset)+lastTypeNum));
@@ -346,10 +346,10 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
           toSearch.add(argu.get(0));
           String lastType = ClassFields.get(toSearch);
           int lastTypeNum = 8;
-          if ( lastType=="IntegerType" ){
+          if ( lastType.equals("IntegerType") ){
             lastTypeNum = 4;
           }
-          else if ( lastType=="BooleanType" ){
+          else if ( lastType.equals("BooleanType") ){
             lastTypeNum = 1;
           }
           Pair.add(String.valueOf(Integer.parseInt(lastOffset)+lastTypeNum));
@@ -398,7 +398,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
               String lastOffset = null;
               for ( int i=0; i<InfoParent.size(); i++ ){
                 ArrayList<String> MethodParent = InfoParent.get(i);
-                if ( MethodName==MethodParent.get(0) ){
+                if ( MethodName.equals(MethodParent.get(0)) ){
                   lastOffset = MethodParent.get(1);
                 }
               }
@@ -437,7 +437,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
-      argu = null;  //passed to VarDeclaration
+      argu.clear();  //passed to VarDeclaration
       n.f7.accept(this, argu);
       if ( n.f8.present() ){
         n.f8.accept(this, Scope);
@@ -835,7 +835,7 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
           }
         }
       }
-      if ( ClassName=="this" ){ //check in FunctionFields
+      if ( ClassName.equals("this") ){ //check in FunctionFields
         ClassName = argu.get(1);
       }
       String Type = IdentifierAndCheck(ClassName,argu);

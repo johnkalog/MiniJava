@@ -52,7 +52,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
       for ( ArrayList <String> FunctionInfo : FunctionTypes.keySet() ){ //in parameterlist and in VarDeclaration declared
         ArrayList <String> AllArguments = FunctionTypes.get(FunctionInfo);
         String FunctionVar = key.get(0);
-        if ( key.get(1)==FunctionInfo.get(0) && key.get(2)==FunctionInfo.get(1) ){  //same Method Class
+        if ( key.get(1).equals(FunctionInfo.get(0)) && key.get(2).equals(FunctionInfo.get(1)) ){  //same Method Class
           if ( AllArguments.contains(FunctionVar) ){ //but identifier with name IntegerType?
             throw new DeclareParameterVariable(FunctionVar,key.get(1),key.get(2));
           }
@@ -215,7 +215,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     if ( ClassExtend.containsKey(ClassName) ){
       throw new RedefinitionClass(ClassName);
     }
-    if ( ClassName==ClassParent ){
+    if ( ClassName.equals(ClassParent) ){
       throw new ExtendsItsSelf(ClassName);
     }
     if ( !ClassExtend.containsKey(ClassParent) ){
@@ -262,7 +262,7 @@ public class SymbolTableVisitor extends GJDepthFirst<Map<String, String>, Map<St
     String Type = n.f0.accept(this, argu).keySet().toArray()[0].toString();
     String Identifier =n.f1.accept(this, argu).keySet().toArray()[0].toString();
     String MethodName = argu.get("123");
-    if ( MethodName=="main" && Identifier==IdentifierMain ){
+    if ( MethodName.equals("main") && Identifier.equals(IdentifierMain) ){
       throw new InvalidIdentifierMain(IdentifierMain);
     }
     if ( argu.containsKey(Identifier) ){
