@@ -24,7 +24,23 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
   }
 
   public void printOffsets(){
-
+    for ( String ClassName : ClassRowFields.keySet() ){
+      System.out.println("-----------Class "+ClassName+"-----------");
+      System.out.println("--Variables---");
+      ArrayList< ArrayList<String>> ForThisClassFields = ClassRowFields.get(ClassName);
+      for ( int i=0; i<ForThisClassFields.size(); i++ ){
+        String Identifier = ForThisClassFields.get(i).get(0);
+        String Offset = ForThisClassFields.get(i).get(1);
+        System.out.println(ClassName+"."+Identifier+" : "+Offset);
+      }
+      System.out.println("--Methods---");
+      ArrayList< ArrayList<String>> ForThisClassFunctions = ClassRowFunctions.get(ClassName);
+      for ( int i=0; i<ForThisClassFunctions.size(); i++ ){
+        String Identifier = ForThisClassFunctions.get(i).get(0);
+        String Offset = ForThisClassFunctions.get(i).get(1);
+        System.out.println(ClassName+"."+Identifier+" : "+Offset);
+      }
+    }
   }
 
   public String checkScope(String Identifier,ArrayList <String> argu) throws Exception{ //returns Type of the Identifier in the same scope of argu else null
@@ -158,7 +174,6 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
-      System.out.println(ClassRowFields);
       n.f2.accept(this, argu);
       return _ret;
    }
@@ -234,6 +249,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String ClassName = n.f1.accept(this, argu); //argument to MethodDeclaration
       ArrayList< ArrayList<String>> ForThisClassFields = new ArrayList< ArrayList<String>>(); //reference so can change it later
       ClassRowFields.put(ClassName,ForThisClassFields); //filled at VarDeclaration and Method
+      ArrayList< ArrayList<String>> ForThisClassFunctions = new ArrayList< ArrayList<String>>();
+      ClassRowFunctions.put(ClassName,ForThisClassFunctions);
       ArrayList<String> Scope = new ArrayList<String>();
       Scope.add(ClassName);
       n.f2.accept(this, argu);
@@ -259,6 +276,8 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
       String ClassName = n.f1.accept(this, argu);
       ArrayList< ArrayList<String>> ForThisClassFields = new ArrayList< ArrayList<String>>();
       ClassRowFields.put(ClassName,ForThisClassFields);
+      ArrayList< ArrayList<String>> ForThisClassFunctions = new ArrayList< ArrayList<String>>();
+      ClassRowFunctions.put(ClassName,ForThisClassFunctions);
       ArrayList<String> Scope = new ArrayList<String>();
       Scope.add(ClassName);
       n.f2.accept(this, argu);
@@ -361,9 +380,56 @@ public class TypeCheckingVisitor extends GJDepthFirst<String,ArrayList<String>>{
    public String visit(MethodDeclaration n, ArrayList<String> argu) throws Exception {
       String ClassName = argu.get(0);
       String _ret=null;
-      n.f0.accept(this, argu);
+      String MethoType = n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       String MethodName = n.f2.accept(this, argu);
+      ArrayList< ArrayList<String>> ForThisClass = ClassRowFunctions.get(ClassName);
+      ArrayList<String> Pair = new ArrayList<String>();
+      String ClassParent = ClassExtend.get(ClassName);
+      if ( ForThisClass.isEmpty() ){ //no var declarations for this class before
+        if ( ClassParent!=null ){
+          ArrayList< ArrayList<String>> InfoParent = ClassRowFunctions.get(ClassParent);
+          if ( !InfoParent.isEmpty() ){//there were some declarations before
+            ArrayList<String> toSearch = new ArrayList<String>();
+            toSearch.add(MethodName);
+            toSearch.add(ClassParent);
+            if ( FunctionTypes.containsKey(toSearch) ){ //exist also at parent's class
+              Pair.add(MethodName);
+              String lastOffset = null;
+              for ( int i=0; i<InfoParent.size(); i++ ){
+                ArrayList<String> MethodParent = InfoParent.get(i);
+                if ( MethodName==MethodParent.get(0) ){
+                  lastOffset = MethodParent.get(1);
+                }
+              }
+              Pair.add(String.valueOf(Integer.parseInt(lastOffset)));
+              ForThisClass.add(Pair);
+            }
+            else{
+              Pair.add(MethodName);
+              Pair.add(String.valueOf(0));
+              ForThisClass.add(Pair);
+            }
+          }
+          else{
+            Pair.add(MethodName);
+            Pair.add(String.valueOf(0));
+            ForThisClass.add(Pair);
+          }
+        }
+        else{
+          Pair.add(MethodName);
+          Pair.add(String.valueOf(0));
+          ForThisClass.add(Pair);
+        }
+      }
+      else{
+        Pair.add(MethodName);
+        ArrayList<String> lastArrayList = ForThisClass.get(ForThisClass.size()-1);
+        String lastOffset = lastArrayList.get(1);
+        Pair.add(String.valueOf(Integer.parseInt(lastOffset)+8));
+        ForThisClass.add(Pair);
+      }
       ArrayList<String> Scope = new ArrayList<String>();
       Scope.add(MethodName);
       Scope.add(ClassName);
